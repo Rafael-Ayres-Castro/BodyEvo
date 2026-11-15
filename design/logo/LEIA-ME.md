@@ -1,5 +1,11 @@
 # BodyEvo — 3 logos (conceitos)
 
+**Escolhido: C · Anéis.** Está em uso nos ícones do app (`icons/`):
+
+- `apple-touch-icon.png` (180), `icon-192.png`, `icon-512.png`: três anéis, branco sobre `#7C4DEB`, fundo opaco (o iPhone arredonda sozinho).
+- `icon-maskable-512.png`: o mesmo desenho dentro da zona segura do Android.
+- `icon.svg` (favicon): versão para tamanhos pequenos com **dois** anéis mais grossos (`c-aneis/c-aneis-pequeno.svg`), porque os três anéis se fundem em 16–32 px.
+
 `visao-geral.png` mostra os três lado a lado: ícone do app, logo com o nome e os tamanhos 64/32/16 px.
 
 | Pasta | Conceito | Ideia |
