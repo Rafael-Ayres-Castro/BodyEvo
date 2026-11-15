@@ -1,6 +1,6 @@
 /* Service worker do Rumo: guarda o app no aparelho para abrir offline e recebe as notificações.
    A cada mudança em qualquer arquivo do app, aumente a VERSAO para o celular baixar a versão nova. */
-const VERSAO = 'rumo-v1';
+const VERSAO = 'rumo-v2';
 
 const ARQUIVOS = [
   './',

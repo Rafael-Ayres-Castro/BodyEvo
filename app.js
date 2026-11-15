@@ -92,16 +92,10 @@ async function tokenAtual() {
   return data && data.session ? data.session.access_token : null;
 }
 
-async function enviarCodigoLogin(email) {
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true },
-  });
-  if (error) throw error;
-}
-
-async function confirmarCodigoLogin(email, codigo) {
-  const { data, error } = await sb.auth.verifyOtp({ email, token: codigo, type: 'email' });
+/* Login por e-mail e senha. O usuário é criado uma vez no painel do Supabase
+   (Authentication › Users › Add user); o app não cria contas. */
+async function entrarComSenha(email, senha) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
   if (error) throw error;
   return data.session;
 }
@@ -482,7 +476,7 @@ const estado = {
   add: null,            // sheet Adicionar alimento
   peso: null,           // sheet Peso e gasto
   editor: null,         // sheet genérico de Ajustes
-  login: { etapa: 'email', email: '', erro: '', enviando: false },
+  login: { email: '', erro: '', enviando: false },
   resumoData: null,
   giro: 0,              // ângulo do ícone "Atualizar"
 };
@@ -873,20 +867,15 @@ function syncHTML() { return '<button type="button" class="sync num" data-acao="
 function renderLogin() {
   const l = estado.login;
   const erro = l.erro ? `<p class="msg-erro" role="alert">${esc(l.erro)}</p>` : '';
-  const corpo = l.etapa === 'email' ? `
+  const corpo = `
       <label class="rotulo" for="login-email">E-mail</label>
-      <div class="campo-grande"><input id="login-email" type="email" inputmode="email" autocomplete="email"
-        autocapitalize="off" enterkeyhint="send" required value="${esc(l.email)}" placeholder="voce@exemplo.com"></div>
+      <div class="campo-grande"><input id="login-email" type="email" inputmode="email" autocomplete="username"
+        autocapitalize="off" enterkeyhint="next" required value="${esc(l.email)}" placeholder="voce@exemplo.com"></div>
+      <label class="rotulo" for="login-senha">Senha</label>
+      <div class="campo-grande"><input id="login-senha" type="password" autocomplete="current-password"
+        autocapitalize="off" enterkeyhint="go" required></div>
       ${erro}
-      <button type="submit" class="btn-principal press" ${l.enviando ? 'disabled' : ''}>${l.enviando ? 'Enviando…' : 'Enviar código'}</button>`
-    : `
-      <p class="msg-suave">Enviamos um código para <b>${esc(l.email)}</b>. Digite aqui: o teclado do iPhone costuma sugerir o código do Mail.</p>
-      <label class="sr-only" for="login-codigo">Código</label>
-      <div class="campo-grande campo-codigo"><input id="login-codigo" class="num" type="text" inputmode="numeric"
-        autocomplete="one-time-code" maxlength="10" enterkeyhint="go" placeholder="······"></div>
-      ${erro}
-      <button type="submit" class="btn-principal press" ${l.enviando ? 'disabled' : ''}>${l.enviando ? 'Entrando…' : 'Entrar'}</button>
-      <button type="button" class="btn-texto press" data-acao="login-voltar">Usar outro e-mail</button>`;
+      <button type="submit" class="btn-principal press" ${l.enviando ? 'disabled' : ''}>${l.enviando ? 'Entrando…' : 'Entrar'}</button>`;
   $('#login').innerHTML = `
     <div class="login-marca">
       <img src="icons/icon-192.png" alt="" width="72" height="72">
@@ -901,31 +890,23 @@ async function enviarLogin() {
   const l = estado.login;
   if (l.enviando) return;
   l.erro = '';
-  if (l.etapa === 'email') {
-    const email = $('#login-email').value.trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { l.erro = 'Confira o e-mail.'; renderLogin(); return; }
-    l.email = email; l.enviando = true; renderLogin();
-    try {
-      await enviarCodigoLogin(email);
-      l.etapa = 'codigo';
-    } catch (e) {
-      l.erro = navigator.onLine ? 'Não deu para enviar o código. Espere um minuto e tente de novo.' : 'Sem conexão. O primeiro acesso precisa de internet.';
-    }
-    l.enviando = false; renderLogin();
-    const campo = $('#login-codigo'); if (campo) campo.focus();
-    return;
-  }
-  const codigo = $('#login-codigo').value.replace(/\D/g, '');
-  if (codigo.length < 6) { l.erro = 'O código tem 6 dígitos.'; renderLogin(); return; }
+  const email = $('#login-email').value.trim().toLowerCase();
+  const senha = $('#login-senha').value;
+  l.email = email;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { l.erro = 'Confira o e-mail.'; renderLogin(); return; }
+  if (!senha) { l.erro = 'Digite a senha.'; renderLogin(); $('#login-senha').focus(); return; }
   l.enviando = true; renderLogin();
   try {
-    const sessao = await confirmarCodigoLogin(l.email, codigo);
+    const sessao = await entrarComSenha(email, senha);
     l.enviando = false;
     entrar(sessao.user);
   } catch (e) {
     l.enviando = false;
-    l.erro = 'Código inválido ou vencido. Peça um novo.';
+    l.erro = !navigator.onLine ? 'Sem conexão. O primeiro acesso precisa de internet.'
+      : (e && e.status === 400) ? 'E-mail ou senha incorretos.'
+      : 'Não deu para entrar. Tente de novo em instantes.';
     renderLogin();
+    $('#login-senha').focus();
   }
 }
 
@@ -937,7 +918,7 @@ function entrar(user) {
   usuario = { id: user.id, email: user.email };
   store.gravar(CHAVES.usuario, usuario);
   semSessao = false;
-  estado.login = { etapa: 'email', email: '', erro: '', enviando: false };
+  estado.login = { email: '', erro: '', enviando: false };
   if (estado.tela === 'login') {
     history.replaceState({ tela: 'hoje' }, '', '#hoje');
     mostrar('hoje', { animar: false });
@@ -3523,7 +3504,6 @@ const ACOES = {
   importar: () => { carregarXLSX().catch(() => {}); $('#arquivo-importar').click(); },
   exportar: (el) => exportar(el.dataset.tipo),
   sair: () => sair(),
-  'login-voltar': () => { estado.login.etapa = 'email'; estado.login.erro = ''; renderLogin(); },
 
   'resumo-revisar': () => {
     store.gravar(CHAVES.resumo, { data: estado.resumoData, t: Date.now() });

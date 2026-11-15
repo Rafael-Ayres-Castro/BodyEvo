@@ -36,30 +36,22 @@ node --test
 
 1. Crie um projeto em [supabase.com](https://supabase.com). Recomendo um projeto só para o Rumo, separado do FastRep; o plano gratuito permite dois.
 2. **SQL Editor › New query:** cole `supabase/001_schema.sql` e clique em **Run**. Pode rodar de novo sem problema.
-3. **Authentication › Sign In / Providers › Email:** deixe ligado.
-4. **Authentication › Emails › Magic Link:** troque o corpo do e-mail para incluir o código, por exemplo:
-   ```html
-   <h2>Seu código do Rumo</h2>
-   <p style="font-size:28px;letter-spacing:4px"><b>{{ .Token }}</b></p>
-   <p>Ou toque no link: <a href="{{ .ConfirmationURL }}">entrar</a></p>
-   ```
-   O login é por **código de 6 dígitos**. No iPhone, o link do e-mail abre no Safari, e o app da Tela de Início tem um armazenamento separado do Safari. Com o código, você entra dentro do próprio app. O link continua funcionando no computador.
-5. **Authentication › URL Configuration:** em *Site URL* coloque `https://rafael-ayres-castro.github.io/rumo/`. Em *Redirect URLs*, adicione essa mesma URL e `http://localhost:8000/`.
-6. **Project Settings › API:** copie a *Project URL* e a chave **publishable** para o topo de `app.js`:
+3. **Authentication › Users › Add user › Create new user:** coloque seu e-mail e uma senha e marque **Auto Confirm User**. O login do app é por **e-mail e senha**; não precisa de SMTP, de template de e-mail nem de URLs de redirecionamento.
+4. **Authentication › Sign In / Providers:** desligue **Allow new users to sign up**. O app não cria contas; só o usuário do passo 3 entra.
+5. **Project Settings › API:** copie a *Project URL* e a chave **publishable** para o topo de `app.js`:
    ```js
    const SUPABASE_URL = 'https://xxxx.supabase.co';
    const SUPABASE_KEY = 'sb_publishable_…';
    ```
    A chave publishable é pública por natureza. Quem protege os dados é a RLS: cada linha tem `user_id` e só o dono da sessão lê e grava.
-7. Abra o app e entre com seu e-mail. No primeiro acesso, o app cria os parâmetros, a meta de 2.900 kcal, as metas de macros, as 7 refeições e os 16 alimentos. Se preferir criar pelo SQL, use `supabase/002_seed.sql`.
-8. Depois do seu primeiro login, desligue novos cadastros em **Authentication › Sign In / Providers › Allow new users to sign up**. O app é só seu.
+6. Abra o app e entre com o e-mail e a senha. No primeiro acesso, o app cria os parâmetros, a meta de 2.900 kcal, as metas de macros, as 7 refeições e os 16 alimentos. Se preferir criar pelo SQL, use `supabase/002_seed.sql`. A sessão fica salva: não é preciso entrar de novo a cada uso.
 
 ## 2. GitHub Pages
 
-1. Crie o repositório **`rumo`**. Ele pode ser público: nenhum segredo vai para o git, e `referencia/` (a planilha com seus dados) fica fora pelo `.gitignore`.
+1. O repositório é **`Rafael-Ayres-Castro/BodyEvo`**. Ele pode ser público: nenhum segredo vai para o git, e `referencia/` (a planilha com seus dados) fica fora pelo `.gitignore`.
 2. Faça o push da branch `main`.
 3. **Settings › Pages › Source:** *Deploy from a branch*, branch `main`, pasta `/ (root)`. O `.nojekyll` já está no projeto.
-4. O app fica em `https://rafael-ayres-castro.github.io/rumo/`. Todos os caminhos são relativos (sem `/` no começo) para funcionar nesse subcaminho.
+4. O app fica em `https://rafael-ayres-castro.github.io/BodyEvo/`. Todos os caminhos são relativos (sem `/` no começo) para funcionar nesse subcaminho.
 
 **A cada mudança no app, aumente a `VERSAO` em `sw.js`** (`rumo-v1` → `rumo-v2`…). É ela que faz o iPhone baixar a versão nova. A versão instalada aparece no fim da tela Ajustes.
 

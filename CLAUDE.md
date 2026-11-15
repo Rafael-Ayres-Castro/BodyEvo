@@ -7,6 +7,8 @@ PWA pessoal de bulking (um usuário). JS puro, sem build. Modelo do FastRep (`~/
 - Eventos por delegação: `data-acao` (clique, mapa `ACOES`), `data-campo` (input, `CAMPOS`), `data-muda` (change, `MUDANCAS`). Campos digitáveis atualizam só os dependentes para não perder o foco.
 - `daily_logs` é enviado só com as colunas alteradas (`salvarDia`): a api/ grava as colunas `garmin_*` e nunca sobrescreve `burned_source='manual'`.
 - Cores e medidas só por variáveis em `:root` (`style.css`). Valores visuais vêm de `design/*.dc.html` (o bloco "Polimento" do `<helmet>` sobrescreve os anteriores).
-- Toda entrega: aumentar `VERSAO` em `sw.js`. Commit/push só quando o usuário pedir.
-- Login por código OTP de e-mail (o magic link abre no Safari, fora do PWA instalado).
+- Toda entrega: aumentar `VERSAO` em `sw.js`.
+- Git: ao terminar qualquer mudança, fazer commit e push automático (sem pedir confirmação) para `https://github.com/Rafael-Ayres-Castro/BodyEvo.git`, branch `main`. Autorização permanente do usuário.
+- Commits e PRs **sem** Claude como coautor: nunca adicionar `Co-Authored-By`, "Generated with Claude Code" ou qualquer atribuição ao Claude. O autor é só o usuário.
+- Login por e-mail e senha (`signInWithPassword`). O usuário é criado no painel do Supabase e o cadastro público fica desligado. Sem OTP e sem magic link: dispensa SMTP e template de e-mail.
 - Garmin: endpoints e campos confirmados no Swagger oficial (ver `api/garmin.py`). Não inventar outros.

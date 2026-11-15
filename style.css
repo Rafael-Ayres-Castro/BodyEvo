@@ -588,7 +588,6 @@ body.com-sheet #palco { transform: translateY(12px) scale(0.92); border-radius: 
 .campo-grande { height: 56px; padding: 0 16px; border-radius: var(--r-16); background: var(--campo); display: flex; align-items: center; }
 .campo-grande:focus-within { box-shadow: var(--anel-foco); background: var(--cartao); }
 .campo-grande input { flex: 1; font-size: 17px; font-weight: 650; }
-.campo-codigo input { text-align: center; font-size: 28px; font-weight: 750; letter-spacing: 0.3em; }
 .rotulo { font-size: 12px; font-weight: 650; color: var(--texto-2); letter-spacing: 0.01em; }
 .msg-erro { font-size: 13px; font-weight: 600; color: var(--alerta); }
 .msg-suave { font-size: 13px; font-weight: 550; color: var(--texto-2); line-height: 1.45; text-align: center; }
