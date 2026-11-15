@@ -1,6 +1,6 @@
 /* Service worker do BodyEvo: guarda o app no aparelho para abrir offline e recebe as notificações.
    A cada mudança em qualquer arquivo do app, aumente a VERSAO para o celular baixar a versão nova. */
-const VERSAO = 'bodyevo-v6';
+const VERSAO = 'bodyevo-v7';
 
 const ARQUIVOS = [
   './',
@@ -11,6 +11,7 @@ const ARQUIVOS = [
   './manifest.json',
   './vendor/supabase.min.js',
   './vendor/xlsx.full.min.js',
+  './dados/taco.json',
   './fonts/plus-jakarta-sans-latin-wght-normal.woff2',
   './icons/icon.svg',
   './icons/icon-192.png',

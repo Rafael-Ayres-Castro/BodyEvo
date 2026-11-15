@@ -9,6 +9,8 @@ App pessoal (PWA) para acompanhar um bulking leve no iPhone: peso, refeições p
 ```
 index.html  style.css  app.js  regras.js  sw.js  manifest.json   → o app (estático)
 vendor/  fonts/  icons/                                         → dependências guardadas no projeto
+dados/taco.json                                                 → tabela TACO (591 alimentos, por 100 g)
+ferramentas/gerar_taco.py                                       → gera dados/taco.json
 tests/regras.test.js                                            → testes das regras (node --test)
 supabase/001_schema.sql  supabase/002_seed.sql                  → tabelas, RLS e dados iniciais
 api/                                                            → FastAPI (Garmin + push)
@@ -114,12 +116,20 @@ Endpoints do Garmin usados, conferidos no Swagger oficial e no [cliente Python d
   - as medidas diárias viram a média semanal do check-in.
 - **Exportar** gera o `.xlsx` com as abas Configuracao, Diario e Semanal, nas colunas da planilha, e um `.csv` do diário no padrão do Excel brasileiro (`;` e vírgula decimal).
 
+## Alimentos: TACO e código de barras
+
+- **TACO** (Tabela Brasileira de Composição de Alimentos, 4ª ed., NEPA/UNICAMP): a busca do "Adicionar alimento" e de "Meus alimentos" também mostra os itens da tabela, por 100 g, sem internet. No sheet, um toque copia o item para os seus alimentos e já abre a balança; em "Meus alimentos", abre o formulário preenchido. Itens já copiados aparecem só nos seus alimentos.
+  - Os dados vêm dos CSVs do projeto [raulfdm/taco-api](https://github.com/raulfdm/taco-api) (MIT), num commit fixo. Para gerar de novo: `python3 -I ferramentas/gerar_taco.py`.
+- **Código de barras** (botão no sheet e no "Novo alimento"): lê o código com a câmera, ou pelo número digitado, e busca no [Open Food Facts](https://world.openfoodfacts.org) (gratuito, sem chave). Abre o formulário preenchido para você conferir com o rótulo antes de salvar. Precisa de internet. Os dados são da comunidade e podem ter erros.
+  - No iPhone, a leitura usa a ZXing (`vendor/zxing.min.js`), que só carrega ao abrir o leitor. Onde o navegador tem leitor nativo (`BarcodeDetector`, Android), usa ele.
+
 ## Dependências (versões fixas, no projeto)
 
 | Arquivo | Versão | Por quê |
 |---|---|---|
+| `vendor/zxing.min.js` | @zxing/library 0.23.0 (npm, Apache-2.0, aviso em `vendor/zxing.LICENSE`) | ler código de barras no iPhone, que não tem leitor nativo no navegador |
+| `dados/taco.json` | TACO 4ª ed., via raulfdm/taco-api@06e466a | alimentos brasileiros por 100 g, offline |
 | `vendor/supabase.min.js` | supabase-js 2.45.4 | banco e login; a mesma versão do FastRep |
 | `vendor/xlsx.full.min.js` | SheetJS 0.20.3 (cdn.sheetjs.com) | importar e exportar .xlsx sem servidor; a 0.18.5 do npm tem falha conhecida ao ler arquivos |
 | `fonts/plus-jakarta-sans-latin-wght-normal.woff2` | @fontsource-variable 5.1.1 | fonte do design, pesos 200–800, licença OFL |
 | `api/requirements.txt` | FastAPI, uvicorn, httpx, pywebpush | só na `api/` |
-# BodyEvo

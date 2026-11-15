@@ -112,6 +112,8 @@
   --hover: #F7F5FB;
   --scrim: rgba(13, 10, 20, 0.32);
   --scrim-forte: rgba(13, 10, 20, 0.5);
+  --leitor-veu: rgba(13, 10, 20, 0.55);   /* escurece a câmera fora da mira do código de barras */
+  --leitor-campo: rgba(255, 255, 255, 0.16);
   --vidro: rgba(255, 255, 255, 0.74);
   --vidro-borda: rgba(255, 255, 255, 0.8);
   --desbotar: rgba(244, 242, 249, 0.96);
@@ -781,6 +783,10 @@ body.com-sheet #palco { transform: translateY(12px) scale(0.92); border-radius: 
 .ia-check { width: 24px; height: 24px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--violeta-borda); color: var(--branco); }
 [aria-pressed="true"] > .ia-check { background: var(--violeta); }
 .lista-vazia { margin: 8px 0; text-align: center; font-size: 14px; font-weight: 600; color: var(--texto-2); }
+.taco-titulo { margin: 10px 2px 2px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; color: var(--texto-2); }
+.taco-titulo small { font-size: 12px; font-weight: 600; }
+.ia-mais { width: 24px; height: 24px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--violeta-fundo); color: var(--violeta-forte); }
+.acoes-novo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
 
 .painel {
   position: absolute; left: 0; right: 0; bottom: 0;
@@ -859,8 +865,11 @@ body.com-sheet #palco { transform: translateY(12px) scale(0.92); border-radius: 
 .linha-alimento:active { background: var(--apertado); }
 .la-kcal { font-size: 15px; font-weight: 750; white-space: nowrap; }
 .la-kcal small { font-size: 11px; font-weight: 650; color: var(--texto-2); }
+.taco-bloco { display: flex; flex-direction: column; gap: 6px; }
+.taco-bloco:empty { display: none; }
 
 /* 6g. Novo alimento */
+.origem-dados { margin: -4px 4px 0; font-size: 12px; line-height: 1.45; font-weight: 600; color: var(--texto-2); }
 .topo-form { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .topo-form h1 { font-size: 17px; font-weight: 750; }
 .topo-form .acao { height: 44px; padding: 0 4px; display: flex; align-items: center; font-size: 16px; }
@@ -1171,6 +1180,36 @@ body.com-sheet #palco { transform: translateY(12px) scale(0.92); border-radius: 
 @media (min-width: 600px) {
   .sheet { border-radius: var(--r-34); bottom: 16px; }
 }
+
+/* ---------- 7b. Leitor de código de barras (tela cheia, acima dos sheets e abaixo do aviso) ---------- */
+#leitor { position: fixed; inset: 0; z-index: 35; background: var(--fundo-escuro); color: var(--branco); overflow: hidden; }
+#leitor video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.leitor-topo {
+  position: absolute; left: 0; right: 0; top: 0; z-index: 1;
+  padding: max(16px, env(safe-area-inset-top)) var(--pad) 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.leitor-topo h1 { font-size: 17px; font-weight: 750; }
+.leitor-topo .btn-fechar { background: var(--leitor-campo); color: var(--branco); }
+.leitor-mira {
+  position: absolute; left: 50%; top: 42%; width: min(300px, 78vw); height: 150px;
+  transform: translate(-50%, -50%); border-radius: var(--r-16);
+  border: 2px solid var(--branco-80); box-shadow: 0 0 0 100vmax var(--leitor-veu);
+}
+.leitor-dica {
+  position: absolute; left: var(--pad); right: var(--pad); top: calc(42% + 95px);
+  text-align: center; font-size: 14px; line-height: 1.45; font-weight: 600; color: var(--branco-80);
+}
+.leitor-manual {
+  position: absolute; left: var(--pad); right: var(--pad); bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex; gap: 8px; max-width: 448px; margin: 0 auto;
+}
+.leitor-manual input {
+  flex: 1; min-width: 0; height: 52px; padding: 0 16px; border-radius: 26px;
+  background: var(--leitor-campo); color: var(--branco); font-size: 17px; font-weight: 650; letter-spacing: 0.04em;
+}
+.leitor-manual input::placeholder { color: var(--branco-72); letter-spacing: 0; font-weight: 600; }
+.leitor-manual button { height: 52px; padding: 0 20px; border-radius: 26px; background: var(--branco); color: var(--texto); font-size: 15px; font-weight: 700; flex: none; }
 
 /* ---------- 8. Utilitários de layout ---------- */
 .col2 { display: flex; flex-direction: column; gap: 2px; min-width: 0; }

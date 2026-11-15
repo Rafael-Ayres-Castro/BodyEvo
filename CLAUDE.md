@@ -14,3 +14,4 @@ PWA pessoal de bulking (um usuário). JS puro, sem build. Modelo do FastRep (`~/
 - Commits e PRs **sem** Claude como coautor: nunca adicionar `Co-Authored-By`, "Generated with Claude Code" ou qualquer atribuição ao Claude. O autor é só o usuário.
 - Login por e-mail e senha (`signInWithPassword`). O usuário é criado no painel do Supabase e o cadastro público fica desligado. Sem OTP e sem magic link: dispensa SMTP e template de e-mail.
 - Garmin: endpoints e campos confirmados no Swagger oficial (ver `api/garmin.py`). Não inventar outros.
+- Alimentos externos só preenchem, nunca gravam sozinhos no histórico: TACO (`dados/taco.json`, gerado por `ferramentas/gerar_taco.py`, não editar à mão) e Open Food Facts (`buscarCodigoBarras`, `world.openfoodfacts.org/api/v2/product/{código}`, campos `*_100g`). A ZXing (`vendor/zxing.min.js`) carrega só ao abrir o leitor.

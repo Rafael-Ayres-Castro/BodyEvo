@@ -123,6 +123,58 @@ async function chamarApi(caminho, corpo) {
   }
 }
 
+/* ---------- Bases de alimentos (só leitura) ---------- */
+
+/* TACO 4ª ed. (NEPA/UNICAMP), por 100 g. Fica em dados/taco.json (gerado por ferramentas/gerar_taco.py)
+   e o service worker guarda o arquivo para funcionar sem internet. Carrega só na primeira busca. */
+let taco = null;
+let tacoPromessa = null;
+function carregarTaco() {
+  if (taco) return Promise.resolve(taco);
+  if (!tacoPromessa) {
+    tacoPromessa = fetch('dados/taco.json')
+      .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then((d) => {
+        taco = d.itens.map(([nome, kcal, p, c, g]) => ({ nome, kcal, p, c, g, chave: R.normalizar(nome) }));
+        return taco;
+      })
+      .catch((e) => { tacoPromessa = null; throw e; });
+  }
+  return tacoPromessa;
+}
+
+/* Open Food Facts: produto pelo código de barras (sem chave; precisa de internet).
+   Devolve null se o produto não existe ou não tem as calorias por 100 g. */
+async function buscarCodigoBarras(codigo) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const campos = 'product_name,product_name_pt,brands,nutriments';
+    const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(codigo)}.json?fields=${campos}`, { signal: ctrl.signal });
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const p = d && d.status === 1 && d.product;
+    const n = p && p.nutriments;
+    const kcal = n && numOuNada(n['energy-kcal_100g']);
+    if (!kcal) return null;
+    const nome = String(p.product_name_pt || p.product_name || '').trim();
+    const marca = String(p.brands || '').split(',')[0].trim();
+    const comMarca = marca && !R.normalizar(nome).includes(R.normalizar(marca)) ? `${nome} (${marca})` : nome;
+    return {
+      nome: (comMarca || `Produto ${codigo}`).slice(0, 60),
+      kcal, p: numOuNada(n.proteins_100g), c: numOuNada(n.carbohydrates_100g), g: numOuNada(n.fat_100g),
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function numOuNada(v) {
+  const x = typeof v === 'number' ? v : parseFloat(v);
+  return Number.isFinite(x) && x >= 0 ? x : null;
+}
+
 
 /* =====================================================================
    2. FILA DE SINCRONIZAÇÃO (offline-first)
@@ -510,6 +562,52 @@ function sinal(n, f = fmt.int, eps = 0.0001) {
 }
 const num = (x) => R.numOuNulo(x);
 const limparNum = (t, max = 6) => String(t).replace(/[^0-9,.]/g, '').slice(0, max);
+
+/* ---------- Busca na TACO ---------- */
+
+/** Itens da TACO que contêm todas as palavras da busca ("arroz cozido" acha "Arroz, tipo 1, cozido").
+    Primeiro os que começam pela busca, depois os que começam pela primeira palavra; dentro de cada grupo, A–Z. */
+function buscarNaTaco(busca, limite = 8) {
+  if (!taco) return [];
+  const q = R.normalizar(busca);
+  const palavras = q.split(/[\s,]+/).filter(Boolean);
+  if (!palavras.length) return [];
+  const nota = (t) => (t.chave.startsWith(q) ? 0 : t.chave.startsWith(palavras[0]) ? 1 : 2);
+  return taco.filter((t) => palavras.every((p) => t.chave.includes(p)))
+    .sort((a, b) => nota(a) - nota(b) || a.nome.localeCompare(b.nome, 'pt-BR'))
+    .slice(0, limite);
+}
+
+/** O nome contém todas as palavras da busca (já normalizada)? */
+function casaBusca(nome, q) {
+  const n = R.normalizar(nome);
+  return q.split(/[\s,]+/).filter(Boolean).every((p) => n.includes(p));
+}
+
+/** Alimento ativo com o mesmo nome (evita duplicar quem já foi copiado da TACO ou do código de barras). */
+function alimentoComNome(nome) {
+  const k = R.normalizar(nome);
+  return cache.foods.find((f) => !f.archived && R.normalizar(f.name) === k) || null;
+}
+
+/** Copia um item (TACO ou código de barras) para "Meus alimentos" e devolve a linha. */
+function criarAlimentoDe(base) {
+  const linha = {
+    id: novoId(), name: base.nome.slice(0, 60),
+    kcal_100g: base.kcal, protein_100g: base.p, carb_100g: base.c, fat_100g: base.g,
+    label_basis: '100g', portion_g: null, unit_g: null, unit_label: null,
+    last_grams: null, use_count: 0, archived: false,
+  };
+  gravarLinha('foods', linha);
+  processarFila();
+  return derivados().alimentos.get(linha.id) || linha;
+}
+
+/** Texto curto por 100 g de um item da TACO. */
+function tacoTexto(t) {
+  const v = (x) => fmt.ate1(x || 0);
+  return `${fmt.int(t.kcal)} kcal · P ${v(t.p)} · C ${v(t.c)} · G ${v(t.g)}`;
+}
 const arred = (n, casas = 1) => Math.round(n * 10 ** casas) / 10 ** casas;
 /** Valor para um campo de texto: 30 → '30', 2.4 → '2,4'. */
 const paraCampo = (n, max = 1) => (n === null || n === undefined || n === '' ? '' : nf(0, max).format(n).replace(/\./g, ''));
@@ -582,6 +680,7 @@ const P = {
   exclamacao: '<path d="M12 6v8M12 18h.01"/>',
   atencao: '<path d="M12 7v6M12 17h.01"/>',
   busca: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>',
+  codigo: '<path d="M4 7V5h3M17 5h3v2M20 17v2h-3M7 19H4v-2M8 8v8M11 8v8M14 8v8M17 8v8"/>',
 };
 const PONTOS = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/></svg>';
 
@@ -1406,7 +1505,7 @@ function renderAddLista() {
   const q = R.normalizar(a.busca);
   const meal = derivados().refeicoes.get(a.mealId);
   const foods = q
-    ? cache.foods.filter((f) => !f.archived && R.normalizar(f.name).includes(q)).sort((x, y) => x.name.localeCompare(y.name, 'pt-BR'))
+    ? cache.foods.filter((f) => !f.archived && casaBusca(f.name, q)).sort((x, y) => x.name.localeCompare(y.name, 'pt-BR'))
     : maisUsados(a.mealId);
   $('#add-lista-titulo').textContent = q ? 'Resultados'
     : `Mais usados ${meal ? (artigo(meal.name) === 'à' ? 'no horário da ' : 'no ') + minuscula(meal.name) : ''}`;
@@ -1415,8 +1514,34 @@ function renderAddLista() {
       ${num(f.last_grams) ? `<span class="ia-ult num">últ. ${fmt.ate1(num(f.last_grams))} g</span>` : ''}
       <span class="ia-check" aria-hidden="true">${ic(P.check, 14, 3)}</span></button>`).join('');
   const vazio = q && !foods.length ? `<p class="lista-vazia">Nada com “${esc(a.busca.trim())}” nos seus alimentos.</p>` : '';
-  $('#add-lista').innerHTML = `${itens}${vazio}
-    <button type="button" class="btn-tracejado press" data-acao="add-novo">${ic(P.mais, 16, 2.4)}Cadastrar novo alimento</button>`;
+  $('#add-lista').innerHTML = `${itens}${vazio}${q ? tacoNaListaHTML(a.busca, 'add-taco', 6) : ''}
+    <div class="acoes-novo">
+      <button type="button" class="btn-tracejado press" data-acao="add-novo">${ic(P.mais, 16, 2.4)}Cadastrar novo</button>
+      <button type="button" class="btn-tracejado press" data-acao="add-codigo">${ic(P.codigo, 16, 2.2)}Código de barras</button>
+    </div>`;
+  if (q && !taco) carregarTaco().then(() => { if (estado.add && estado.add.busca === a.busca) renderAddLista(); }).catch(() => {});
+}
+
+/** Seção "Tabela TACO" abaixo dos resultados de uma busca. */
+let tacoMostrados = [];
+function tacoNaListaHTML(busca, acao, limite) {
+  if (!taco) return '';
+  // O que já foi copiado para "Meus alimentos" aparece só lá.
+  tacoMostrados = buscarNaTaco(busca, limite + 10).filter((t) => !alimentoComNome(t.nome)).slice(0, limite);
+  if (!tacoMostrados.length) return '';
+  return `<h3 class="taco-titulo">Tabela TACO <small>valores por 100 g</small></h3>
+    ${tacoMostrados.map((t, i) => `<button type="button" class="item-alimento press" data-acao="${acao}" data-i="${i}">
+      <span class="ia-texto"><span class="ia-nome">${esc(t.nome)}</span><span class="ia-sub num">${tacoTexto(t)}</span></span>
+      <span class="ia-mais" aria-hidden="true">${ic(P.mais, 14, 2.6)}</span></button>`).join('')}`;
+}
+
+/** Escolhe um alimento no sheet (já existente ou recém-copiado) e mostra o painel da balança. */
+function escolherNoAdd(f) {
+  const a = estado.add;
+  if (a.foodId !== f.id) { a.foodId = f.id; a.gramas = gramasSugeridas(f); }
+  renderAddLista();
+  renderAddPainel();
+  vibrar(5);
 }
 
 function renderAddPainel() {
@@ -1656,6 +1781,7 @@ function renderAlimentos() {
           placeholder="Buscar" value="${esc(busca)}" data-campo="alimentos-busca"></label>
       <div id="alimentos-ordem"></div>
       <section class="lista-alimentos" aria-label="Lista de alimentos" id="alimentos-lista"></section>
+      <section class="taco-bloco" aria-label="Tabela TACO" id="alimentos-taco"></section>
       <p class="nota-rodape">Valores por 100 g, como no rótulo. Itens com porção ou unidade (whey, ovo) também podem ser registrados pela quantidade.</p>`;
   }
   $('#alimentos-conta').textContent = `${ativos.length} alimentos · valores por 100 g`;
@@ -1666,7 +1792,7 @@ function renderAlimentos() {
 function renderListaAlimentos() {
   const q = R.normalizar(estado.alimentos.busca);
   const porUso = estado.alimentos.ordem === 1;
-  let lista = cache.foods.filter((f) => !f.archived && (!q || R.normalizar(f.name).includes(q)));
+  let lista = cache.foods.filter((f) => !f.archived && (!q || casaBusca(f.name, q)));
   lista = porUso
     ? lista.sort((a, b) => (num(b.use_count) || 0) - (num(a.use_count) || 0))
     : lista.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
@@ -1680,16 +1806,20 @@ function renderListaAlimentos() {
   }).join('');
   const t = estado.alimentos.busca.trim();
   $('#alimentos-lista').innerHTML = html || `<div class="vazio">
-    <p>${t ? `Nenhum alimento com “${esc(t)}”.` : 'Nenhum alimento cadastrado.'}</p>
+    <p>${t ? `Nenhum alimento seu com “${esc(t)}”.` : 'Nenhum alimento cadastrado.'}</p>
     <button type="button" class="btn-claro press" data-acao="novo-alimento" data-nome="${esc(t)}">${t ? `Cadastrar “${esc(t)}”` : 'Cadastrar alimento'}</button></div>`;
+  $('#alimentos-taco').innerHTML = t ? tacoNaListaHTML(t, 'alimentos-taco', 10) : '';
+  if (t && !taco) carregarTaco().then(() => { if (estado.alimentos.busca.trim() === t && estado.tela === 'alimentos') renderListaAlimentos(); }).catch(() => {});
 }
 
 /* ---------- 4g. Novo / editar alimento ---------- */
 
-function rascunhoAlimento(id, nome = '', voltarAdd = null) {
+/** prefill = { nome, kcal, p, c, g, origem } vindo da TACO ou do código de barras (valores por 100 g). */
+function rascunhoAlimento(id, nome = '', voltarAdd = null, prefill = null) {
   const f = id ? derivados().alimentos.get(id) : null;
   if (!f) {
-    return { id: null, nome, base: 0, porcao: '', kcal: '', p: '', c: '', g: '', unidade: '', voltarAdd };
+    const r = { id: null, nome, base: 0, porcao: '', kcal: '', p: '', c: '', g: '', unidade: '', voltarAdd, origem: '' };
+    return prefill ? preencherRascunho(r, prefill) : r;
   }
   const porcao = f.label_basis === 'portion' && num(f.portion_g) ? num(f.portion_g) : null;
   const k = porcao ? porcao / 100 : 1;
@@ -1699,6 +1829,11 @@ function rascunhoAlimento(id, nome = '', voltarAdd = null) {
     kcal: v(f.kcal_100g), p: v(f.protein_100g), c: v(f.carb_100g), g: v(f.fat_100g),
     unidade: num(f.unit_g) ? paraCampo(num(f.unit_g)) : '', voltarAdd,
   };
+}
+
+function preencherRascunho(r, d) {
+  const v = (x) => (x === null || x === undefined ? '' : paraCampo(arred(x, 1)));
+  return { ...r, nome: d.nome || r.nome, base: 0, porcao: '', kcal: v(d.kcal), p: v(d.p), c: v(d.c), g: v(d.g), origem: d.origem || '' };
 }
 
 const NUTRIENTES = [
@@ -1720,6 +1855,8 @@ function renderAlimento() {
       <h1>${a.id ? 'Editar alimento' : 'Novo alimento'}</h1>
       <button type="button" class="acao salvar press" data-acao="alimento-salvar">Salvar</button>
     </div>
+    ${a.id ? '' : `<button type="button" class="btn-tracejado press" data-acao="al-codigo">${ic(P.codigo, 16, 2.2)}Preencher pelo código de barras</button>`}
+    ${a.origem ? `<p class="origem-dados">${esc(a.origem)}</p>` : ''}
     <div class="cartao-20 nome"><label class="rotulo" for="al-nome">Nome</label>
       <input id="al-nome" type="text" enterkeyhint="next" autocomplete="off" autocapitalize="sentences" maxlength="60"
         value="${esc(a.nome)}" placeholder="Ex.: Whey protein baunilha" data-campo="al" data-k="nome"></div>
@@ -3086,6 +3223,144 @@ function exportar(tipo) {
 }
 
 
+/* ---------- 4o. Leitor de código de barras ---------- */
+
+/* Câmera traseira em tela cheia. Usa o BarcodeDetector do navegador quando existe (Android/Chrome);
+   no iPhone carrega a ZXing (vendor/zxing.min.js) só na primeira leitura. Sempre dá para digitar o número. */
+const FORMATOS = ['ean_13', 'ean_8', 'upc_a', 'upc_e'];
+let leitor = null;   // { fim, stream, zxing, timer }
+
+function carregarScript(src) {
+  return new Promise((ok, erro) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = () => { s.remove(); erro(new Error('falhou ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+
+function lerCodigoDeBarras() {
+  fecharLeitor(null);
+  esconderAviso();
+  return new Promise((fim) => {
+    const el = document.createElement('div');
+    el.id = 'leitor';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'leitor-h');
+    el.innerHTML = `
+      <video id="leitor-video" playsinline muted autoplay aria-hidden="true"></video>
+      <div class="leitor-topo"><h1 id="leitor-h">Código de barras</h1>
+        <button type="button" class="btn-fechar press" data-acao="leitor-fechar" aria-label="Fechar">${ic(P.fechar, 18, 2.4)}</button></div>
+      <div class="leitor-mira" aria-hidden="true"></div>
+      <p class="leitor-dica" id="leitor-dica" aria-live="polite">Abrindo a câmera…</p>
+      <form class="leitor-manual" data-form="leitor" novalidate>
+        <label class="sr-only" for="leitor-num">Número do código de barras</label>
+        <input id="leitor-num" class="num" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="search" maxlength="14" placeholder="Ou digite o número">
+        <button type="submit" class="press">Buscar</button>
+      </form>`;
+    document.body.appendChild(el);
+    leitor = { fim, el, stream: null, zxing: null, timer: null };
+    iniciarCamera(leitor);
+  });
+}
+
+async function iniciarCamera(l) {
+  const dica = (t) => { const d = $('#leitor-dica'); if (d) d.textContent = t; };
+  const video = $('#leitor-video');
+  const restricoes = { video: { facingMode: { ideal: 'environment' } }, audio: false };
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('sem câmera');
+    let nativo = null;
+    if ('BarcodeDetector' in window) {
+      const suportados = await window.BarcodeDetector.getSupportedFormats().catch(() => []);
+      const formatos = FORMATOS.filter((f) => suportados.includes(f));
+      if (formatos.length) nativo = new window.BarcodeDetector({ formats: formatos });
+    }
+    if (nativo) {
+      l.stream = await navigator.mediaDevices.getUserMedia(restricoes);
+      if (leitor !== l) { pararCamera(l); return; }
+      video.srcObject = l.stream;
+      await video.play().catch(() => {});
+      dica('Aponte para o código de barras do rótulo');
+      const tentar = async () => {
+        if (leitor !== l) return;
+        try {
+          const achados = await nativo.detect(video);
+          if (achados.length) { fecharLeitor(achados[0].rawValue); return; }
+        } catch (e) { /* quadro ainda não pronto */ }
+        l.timer = setTimeout(tentar, 200);
+      };
+      tentar();
+      return;
+    }
+    if (!window.ZXing) { dica('Carregando o leitor…'); await carregarScript('vendor/zxing.min.js'); }
+    if (leitor !== l) return;
+    const Z = window.ZXing;
+    const dicas = new Map([[Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.EAN_13, Z.BarcodeFormat.EAN_8, Z.BarcodeFormat.UPC_A, Z.BarcodeFormat.UPC_E]]]);
+    l.zxing = new Z.BrowserMultiFormatReader(dicas, 200);
+    const promessa = l.zxing.decodeFromConstraints(restricoes, video, (res) => { if (res && leitor === l) fecharLeitor(res.getText()); });
+    dica('Aponte para o código de barras do rótulo');
+    await promessa;
+  } catch (e) {
+    if (leitor !== l) return;
+    pararCamera(l);
+    const negado = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+    dica(negado ? 'Sem permissão para a câmera. Libere em Ajustes do iPhone ou digite o número abaixo.'
+      : 'Não deu para abrir a câmera. Digite o número abaixo.');
+    const campo = $('#leitor-num'); if (campo) campo.focus();
+  }
+}
+
+function pararCamera(l) {
+  clearTimeout(l.timer);
+  if (l.zxing) { try { l.zxing.reset(); } catch (e) { /* já parado */ } l.zxing = null; }
+  if (l.stream) { l.stream.getTracks().forEach((t) => t.stop()); l.stream = null; }
+}
+
+/** Fecha o leitor e entrega o código lido (ou null se cancelou). */
+function fecharLeitor(codigo) {
+  const l = leitor;
+  if (!l) return;
+  leitor = null;
+  pararCamera(l);
+  l.el.remove();
+  if (codigo) vibrar(15);
+  l.fim(codigo ? String(codigo).replace(/\D/g, '') : null);
+}
+
+function enviarLeitorManual() {
+  const v = ($('#leitor-num').value || '').replace(/\D/g, '');
+  if (v.length < 8) { const d = $('#leitor-dica'); if (d) d.textContent = 'O código de barras tem de 8 a 14 dígitos.'; return; }
+  fecharLeitor(v);
+}
+
+/** Lê o código, consulta o Open Food Facts e preenche (destino 'add' = sheet; 'form' = Novo alimento). */
+async function codigoDeBarras(destino) {
+  const codigo = await lerCodigoDeBarras();
+  if (!codigo) return;
+  if (!navigator.onLine) { aviso('Sem conexão: a busca pelo código de barras precisa de internet.'); return; }
+  aviso('Buscando o produto…', { duracao: 12000 });
+  let d;
+  try { d = await buscarCodigoBarras(codigo); } catch (e) { aviso('Não deu para consultar o Open Food Facts. Tente de novo.'); return; }
+  const noAdd = destino === 'add' && estado.add && sheetAtual === $('#sheet-add');
+  if (!d) {
+    aviso(`Produto ${codigo} não encontrado. Preencha pelo rótulo.`, { duracao: 6000 });
+    if (noAdd) trocarSheetPorTela('alimento', { id: null, nome: '', voltarAdd: { mealId: estado.add.mealId, data: estado.add.data } });
+    return;
+  }
+  const prefill = { ...d, origem: `Open Food Facts · código ${codigo}. Dados da comunidade: confira com o rótulo.` };
+  if (noAdd) {
+    const existente = alimentoComNome(d.nome);
+    if (existente) { escolherNoAdd(existente); aviso(`${existente.name} já está nos seus alimentos`); return; }
+    trocarSheetPorTela('alimento', { id: null, nome: d.nome, voltarAdd: { mealId: estado.add.mealId, data: estado.add.data }, prefill });
+    aviso('Produto encontrado. Confira os valores e salve.');
+    return;
+  }
+  if (destino === 'form' && estado.tela === 'alimento' && estado.alimento) {
+    estado.alimento = preencherRascunho(estado.alimento, prefill);
+    renderAlimento();
+    aviso('Produto encontrado. Confira os valores e salve.');
+  }
+}
+
 /* =====================================================================
    5. NAVEGAÇÃO, EVENTOS GLOBAIS E SERVICE WORKER
    ===================================================================== */
@@ -3121,7 +3396,7 @@ function estadoDoHash(hash) {
  */
 function aplicarParams(s, novo = false) {
   if (s.tela === 'refeicao') { estado.refeicao = { mealId: s.mealId, data: s.data }; estado.editandoItens = false; }
-  if (s.tela === 'alimento' && (novo || !estado.alimento || estado.alimento.id !== (s.id || null))) estado.alimento = rascunhoAlimento(s.id, s.nome || '', s.voltarAdd || null);
+  if (s.tela === 'alimento' && (novo || !estado.alimento || estado.alimento.id !== (s.id || null))) estado.alimento = rascunhoAlimento(s.id, s.nome || '', s.voltarAdd || null, s.prefill || null);
   if (s.tela === 'metas' && (novo || !estado.metas)) estado.metas = rascunhoMetas();
   if (s.tela === 'checkin' && (novo || !estado.checkin || estado.checkin.w !== (s.semana || semanaAtual()))) estado.checkin = rascunhoCheckin(s.semana || semanaAtual());
 }
@@ -3219,6 +3494,7 @@ function trocarAba(aba) {
 }
 
 window.addEventListener('popstate', (e) => {
+  if (leitor) fecharLeitor(null);
   const s = e.state || estadoDoHash(location.hash) || { tela: 'hoje' };
   if (sheetAtual && !s.sheet) fecharSheetAgora();
   if (!$('#resumo').hidden && !s.popup) fecharResumoAgora();
@@ -3466,6 +3742,23 @@ const ACOES = {
     trocarSheetPorTela('alimento', { id: null, nome, voltarAdd: { mealId: a.mealId, data: a.data } });
   },
   'ver-alimentos': () => trocarSheetPorTela('alimentos', {}),
+  'add-taco': (el) => {
+    const t = tacoMostrados[Number(el.dataset.i)];
+    if (!t) return;
+    const existente = alimentoComNome(t.nome);
+    escolherNoAdd(existente || criarAlimentoDe(t));
+    if (!existente) aviso(`Copiado da TACO para seus alimentos`);
+  },
+  'add-codigo': () => codigoDeBarras('add'),
+  'alimentos-taco': (el) => {
+    const t = tacoMostrados[Number(el.dataset.i)];
+    if (!t) return;
+    const existente = alimentoComNome(t.nome);
+    if (existente) { irPara('alimento', { id: existente.id }); return; }
+    irPara('alimento', { id: null, nome: t.nome, prefill: { nome: t.nome, kcal: t.kcal, p: t.p, c: t.c, g: t.g, origem: 'Valores da TACO (4ª ed., NEPA/UNICAMP), por 100 g.' } });
+  },
+  'al-codigo': () => codigoDeBarras('form'),
+  'leitor-fechar': () => fecharLeitor(null),
 
   'refeicao-editar': () => { estado.editandoItens = !estado.editandoItens; renderRefeicao(); },
   'item-apagar': (el) => apagarItem(el.dataset.id),
@@ -3607,10 +3900,12 @@ function ligarEventos() {
     e.preventDefault();
     if (e.target.dataset.form === 'login') enviarLogin();
     if (e.target.id === 'editor-corpo') enviarEditor();
+    if (e.target.dataset.form === 'leitor') enviarLeitorManual();
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (!$('#resumo').hidden) fecharResumo();
+      if (leitor) fecharLeitor(null);
+      else if (!$('#resumo').hidden) fecharResumo();
       else if (sheetAtual) fecharSheet();
     }
     // Enter num campo do sheet de adicionar confirma.
