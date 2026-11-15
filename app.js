@@ -1,7 +1,7 @@
 'use strict';
 
 /* =====================================================================
-   Rumo — acompanhamento de bulking (PWA)
+   BodyEvo — acompanhamento de bulking (PWA)
    ---------------------------------------------------------------------
    Estrutura do arquivo:
      1. Camada de dados  → só estas funções falam com o Supabase
@@ -879,7 +879,7 @@ function renderLogin() {
   $('#login').innerHTML = `
     <div class="login-marca">
       <img src="icons/icon-192.png" alt="" width="72" height="72">
-      <h1 id="login-h" class="titulo">Rumo</h1>
+      <h1 id="login-h" class="titulo">BodyEvo</h1>
       <p>Bulking leve, um dia de cada vez. Entre com seu e-mail para guardar e sincronizar seus dados.</p>
     </div>
     <form class="cartao" data-form="login" novalidate>${corpo}</form>
@@ -939,7 +939,7 @@ async function sair() {
 
 function carregandoHTML() {
   return `<header class="cabecalho"><div class="linha-sobretitulo"><p class="sobretitulo">Carregando seus dados…</p>${syncHTML()}</div>
-    <h1 class="titulo">Rumo</h1></header>
+    <h1 class="titulo">BodyEvo</h1></header>
     <div class="cartao"><p class="texto-14">Buscando o que já está salvo. Na primeira vez, o app cria suas metas, refeições e alimentos.</p></div>`;
 }
 
@@ -2536,7 +2536,7 @@ function renderAjustes() {
       ${linhaChave({ id: 'lemb-ck', titulo: 'Check-in semanal', sub: `${diaCk}, junto com a pesagem`, ligado: s.remind_checkin, muda: 'lembrete', dados: 'data-k="remind_checkin"' })}
       ${linhaChave({ id: 'lemb-resumo', titulo: 'Resumo do fim do dia', sub: `${s.summary_time} · calorias, macros e progresso`, ligado: s.remind_summary, muda: 'lembrete', dados: 'data-k="remind_summary"' })}
       ${linhaAjuste({ acao: 'editar', dados: 'data-ed="horarios"', titulo: 'Horários', valor: `${s.weigh_reminder_time} · ${s.summary_time}` })}
-      ${linhaAjuste({ acao: 'ativar-push', titulo: 'Notificações neste aparelho', sub: 'no iPhone, só com o Rumo na Tela de Início', valor: pushAtivo ? 'Ativas' : 'Ativar' })}
+      ${linhaAjuste({ acao: 'ativar-push', titulo: 'Notificações neste aparelho', sub: 'no iPhone, só com o BodyEvo na Tela de Início', valor: pushAtivo ? 'Ativas' : 'Ativar' })}
     </div>
 
     <h2 class="titulo-grupo">Dados</h2>
@@ -2553,7 +2553,7 @@ function renderAjustes() {
       ${MODO_LOCAL ? '<div class="linha-item"><span class="li-texto"><span class="li-titulo">Modo local</span><span class="li-sub">Configure o Supabase em app.js para sincronizar</span></span></div>'
         : `<button type="button" class="linha-item" data-acao="sair">${ic(P.sair, 20, 1.9, ' class="dados"')}<span class="li-texto"><span class="li-titulo">Sair da conta</span><span class="li-sub">${esc(usuario && usuario.email)}</span></span></button>`}
     </div>
-    <p class="nota-grupo num" id="versao">Rumo</p>`;
+    <p class="nota-grupo num" id="versao">BodyEvo</p>`;
   pedirVersao();
 }
 
@@ -2739,12 +2739,12 @@ function b64urlParaBytes(b64) {
 async function ativarNotificacoes() {
   if (MODO_LOCAL) { aviso('As notificações precisam do Supabase configurado.'); return false; }
   if (!('serviceWorker' in navigator) || !('PushManager' in window) || typeof Notification === 'undefined') {
-    aviso('No iPhone, as notificações só funcionam com o Rumo na Tela de Início (Compartilhar › Adicionar à Tela de Início).', { duracao: 7000 });
+    aviso('No iPhone, as notificações só funcionam com o BodyEvo na Tela de Início (Compartilhar › Adicionar à Tela de Início).', { duracao: 7000 });
     return false;
   }
   try {
     const perm = await Notification.requestPermission();
-    if (perm !== 'granted') { aviso('Notificações bloqueadas. Libere em Ajustes do iPhone › Notificações › Rumo.', { duracao: 6000 }); return false; }
+    if (perm !== 'granted') { aviso('Notificações bloqueadas. Libere em Ajustes do iPhone › Notificações › BodyEvo.', { duracao: 6000 }); return false; }
     const reg = await navigator.serviceWorker.ready;
     let sub = await reg.pushManager.getSubscription();
     if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64urlParaBytes(VAPID_PUBLICA) });
@@ -3025,7 +3025,7 @@ function exportarXlsx() {
     ['Data de início', dataCel(c.inicio)], ['Peso inicial (kg)', c.pesoInicial], ['Peso alvo (kg)', c.pesoAlvo],
     ['Ganho semanal mínimo (kg)', c.ganhoMin], ['Ganho semanal ideal (kg)', c.ganhoIdeal], ['Ganho semanal máximo (kg)', c.ganhoMax],
     ['Calorias atuais (kcal/dia)', metaKcalEm(R.hojeSP())], ['Limite dobra abdominal (mm/semana)', c.limiteDobra],
-    ['Ajuste calórico (kcal/dia)', c.ajusteKcal], [], ['Exportado do Rumo em', dataCel(R.hojeSP())],
+    ['Ajuste calórico (kcal/dia)', c.ajusteKcal], [], ['Exportado do BodyEvo em', dataCel(R.hojeSP())],
     ['Nome', s.display_name || ''],
   ];
   const diario = [COLUNAS_DIARIO, ...linhasDiario().map((l) => [dataCel(l[0]), ...l.slice(1)])];
@@ -3078,7 +3078,7 @@ async function compartilharArquivo(blob, nome) {
 
 function exportar(tipo) {
   if (!window.XLSX && tipo === 'xlsx') { aviso('Carregando o gerador de planilhas… toque de novo.'); carregarXLSX(); return; }
-  const nome = `Rumo-${R.hojeSP()}.${tipo}`;
+  const nome = `BodyEvo-${R.hojeSP()}.${tipo}`;
   compartilharArquivo(tipo === 'xlsx' ? exportarXlsx() : exportarCsv(), nome);
 }
 
@@ -3659,7 +3659,7 @@ function registrarServiceWorker() {
   }
   navigator.serviceWorker.addEventListener('message', (e) => {
     const m = e.data || {};
-    if (m.tipo === 'versao') { const el = $('#versao'); if (el) el.textContent = `Rumo · ${m.versao}`; }
+    if (m.tipo === 'versao') { const el = $('#versao'); if (el) el.textContent = `BodyEvo · ${m.versao}`; }
     if (m.tipo === 'abrir' && m.abrir === 'resumo') abrirResumo(R.hojeSP());
   });
   navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('Service worker não registrado', e));

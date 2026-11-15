@@ -1,7 +1,7 @@
 'use strict';
 
 /* =====================================================================
-   Rumo — regras de negócio (funções puras, sem DOM e sem rede)
+   BodyEvo — regras de negócio (funções puras, sem DOM e sem rede)
    ---------------------------------------------------------------------
    Vêm da planilha referencia/AcompanhamentoPeso.xlsx. Quando a regra
    sai de uma coluna, o comentário cita a aba e a coluna.

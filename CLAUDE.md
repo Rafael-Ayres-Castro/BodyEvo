@@ -1,6 +1,8 @@
-# Rumo — notas para quem for mexer no código
+# BodyEvo — notas para quem for mexer no código
 
 PWA pessoal de bulking (um usuário). JS puro, sem build. Modelo do FastRep (`~/dev/FastRep/serie-pwa`).
+
+- O app se chamava Rumo. As chaves de armazenamento (`rumo.cache`, `rumo.auth`, `rumo.fila`…) e os nomes de infraestrutura (`rumo-api`, `RUMO_*`) continuam assim de propósito: trocar as chaves apaga a sessão e os dados do aparelho. "Rumo aos X kg" no resumo é frase, não o nome.
 
 - Regras da planilha: só em `regras.js` (funções puras) + `tests/regras.test.js` (`node --test`). Cite a coluna da planilha (`referencia/AcompanhamentoPeso.xlsx`, fora do git) ao mexer numa regra.
 - `app.js` em seções: 1 dados (único lugar que fala com o Supabase) · 2 fila offline · 3 estado/utilidades · 4 telas (`renderX`) · 5 navegação/eventos.

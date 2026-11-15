@@ -1,4 +1,4 @@
-# Rumo
+# BodyEvo
 
 App pessoal (PWA) para acompanhar um bulking leve no iPhone: peso, refeições pesadas na balança, macros, check-in semanal com fita e adipômetro, resumo da semana com sugestão de calorias e evolução em gráficos. As regras vêm da planilha `AcompanhamentoPeso.xlsx`.
 
@@ -34,7 +34,7 @@ node --test
 
 ## 1. Supabase
 
-1. Crie um projeto em [supabase.com](https://supabase.com). Recomendo um projeto só para o Rumo, separado do FastRep; o plano gratuito permite dois.
+1. Crie um projeto em [supabase.com](https://supabase.com). Recomendo um projeto só para o BodyEvo, separado do FastRep; o plano gratuito permite dois.
 2. **SQL Editor › New query:** cole `supabase/001_schema.sql` e clique em **Run**. Pode rodar de novo sem problema.
 3. **Authentication › Users › Add user › Create new user:** coloque seu e-mail e uma senha e marque **Auto Confirm User**. O login do app é por **e-mail e senha**; não precisa de SMTP, de template de e-mail nem de URLs de redirecionamento.
 4. **Authentication › Sign In / Providers:** desligue **Allow new users to sign up**. O app não cria contas; só o usuário do passo 3 entra.
@@ -53,11 +53,11 @@ node --test
 3. **Settings › Pages › Source:** *Deploy from a branch*, branch `main`, pasta `/ (root)`. O `.nojekyll` já está no projeto.
 4. O app fica em `https://rafael-ayres-castro.github.io/BodyEvo/`. Todos os caminhos são relativos (sem `/` no começo) para funcionar nesse subcaminho.
 
-**A cada mudança no app, aumente a `VERSAO` em `sw.js`** (`rumo-v1` → `rumo-v2`…). É ela que faz o iPhone baixar a versão nova. A versão instalada aparece no fim da tela Ajustes.
+**A cada mudança no app, aumente a `VERSAO` em `sw.js`** (`bodyevo-v4` → `bodyevo-v5`…). É ela que faz o iPhone baixar a versão nova. A versão instalada aparece no fim da tela Ajustes.
 
 ## 3. iPhone
 
-- Abra a URL do Pages no Safari, toque em **Compartilhar › Adicionar à Tela de Início** e abra o Rumo pelo ícone.
+- Abra a URL do Pages no Safari, toque em **Compartilhar › Adicionar à Tela de Início** e abra o BodyEvo pelo ícone.
 - Para testar no iPhone direto do computador, o Safari exige HTTPS (o service worker e as notificações não funcionam em `http://` pela rede local). O jeito mais simples é um túnel:
   ```bash
   python3 -m http.server 8000

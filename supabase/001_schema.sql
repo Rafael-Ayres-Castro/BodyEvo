@@ -1,5 +1,5 @@
 -- =====================================================================
--- Rumo — tabelas, RLS e gatilhos
+-- BodyEvo — tabelas, RLS e gatilhos
 -- Rode no Supabase: SQL Editor › New query › cole este arquivo › Run.
 -- Pode rodar de novo sem quebrar nada (usa "if not exists").
 --

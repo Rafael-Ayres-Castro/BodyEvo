@@ -1,5 +1,5 @@
 -- =====================================================================
--- Rumo — dados iniciais (OPCIONAL)
+-- BodyEvo — dados iniciais (OPCIONAL)
 -- O próprio app cria estes registros no primeiro acesso, quando vê que o
 -- servidor está vazio. Use este arquivo só se preferir criar pelo SQL
 -- (por exemplo, para recomeçar do zero depois de apagar tudo).

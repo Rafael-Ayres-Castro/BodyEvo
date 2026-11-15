@@ -1,6 +1,6 @@
-/* Service worker do Rumo: guarda o app no aparelho para abrir offline e recebe as notificações.
+/* Service worker do BodyEvo: guarda o app no aparelho para abrir offline e recebe as notificações.
    A cada mudança em qualquer arquivo do app, aumente a VERSAO para o celular baixar a versão nova. */
-const VERSAO = 'rumo-v3';
+const VERSAO = 'bodyevo-v4';
 
 const ARQUIVOS = [
   './',
@@ -84,7 +84,7 @@ self.addEventListener('message', (event) => {
 self.addEventListener('push', (event) => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (e) { d = { body: event.data && event.data.text() }; }
-  event.waitUntil(self.registration.showNotification(d.title || 'Rumo', {
+  event.waitUntil(self.registration.showNotification(d.title || 'BodyEvo', {
     body: d.body || '',
     icon: 'icons/icon-192.png',
     badge: 'icons/icon-192.png',

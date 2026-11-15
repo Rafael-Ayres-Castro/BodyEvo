@@ -1,4 +1,4 @@
-# Render (plano gratuito): a api/ do Rumo.
+# Render (plano gratuito): a api/ do BodyEvo.
 # Dashboard › New › Blueprint › escolha este repositório. Os segredos (sync: false)
 # são pedidos no painel e nunca ficam no git.
 services:

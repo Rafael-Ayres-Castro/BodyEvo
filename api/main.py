@@ -1,4 +1,4 @@
-"""Rumo — api/ mínima: só o que exige segredo ou horário agendado.
+"""BodyEvo — api/ mínima: só o que exige segredo ou horário agendado.
 
   POST /garmin/sync              botão "Atualizar" do app (JWT do Supabase)
   POST /internal/garmin/sync     agendador (token interno)
@@ -28,7 +28,7 @@ USER_ID = os.environ.get("RUMO_USER_ID", "")            # o único usuário (a c
 INTERNAL_TOKEN = os.environ.get("INTERNAL_TOKEN", "")
 ORIGENS = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "https://rafael-ayres-castro.github.io").split(",") if o.strip()]
 
-app = FastAPI(title="Rumo API", docs_url=None, redoc_url=None)
+app = FastAPI(title="BodyEvo API", docs_url=None, redoc_url=None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGENS,
