@@ -22,8 +22,8 @@ const R = (typeof REGRAS !== 'undefined') ? REGRAS : window.REGRAS;
    roda em "modo local": tudo fica só neste aparelho e não há login.
    ===================================================================== */
 
-const SUPABASE_URL = '';   // ex.: 'https://abcdefgh.supabase.co'
-const SUPABASE_KEY = '';   // chave publishable (sb_publishable_…), pública por natureza
+const SUPABASE_URL = 'https://icqwjsnirrxbgzojfjag.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_IScOrD6nNJzUTSDmrUk2_Q_wj728kfK';   // chave publishable, pública por natureza
 const API_URL = '';        // api/ (Garmin e push), ex.: 'https://rumo-api.onrender.com'
 const VAPID_PUBLICA = 'BIEoDcQTzNEX-bOTGHb1kGu3EnT3JVJ7w--1lIIVDabhODo-MAxihrT6hvinLo6850dbxqc6wK03vKFjVj5FFAM';
 
