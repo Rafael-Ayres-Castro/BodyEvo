@@ -902,7 +902,10 @@ async function enviarLogin() {
     entrar(sessao.user);
   } catch (e) {
     l.enviando = false;
+    const codigo = e && e.code;
     l.erro = !navigator.onLine ? 'Sem conexão. O primeiro acesso precisa de internet.'
+      : codigo === 'email_not_confirmed' ? 'E-mail ainda não confirmado. No Supabase, abra Authentication › Users e confirme o usuário.'
+      : codigo === 'over_request_rate_limit' || (e && e.status === 429) ? 'Muitas tentativas. Espere alguns minutos e tente de novo.'
       : (e && e.status === 400) ? 'E-mail ou senha incorretos.'
       : 'Não deu para entrar. Tente de novo em instantes.';
     renderLogin();
