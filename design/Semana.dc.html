@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Resumo da semana</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1),background-color 180ms ease,color 180ms ease,opacity 180ms ease}
+.press:active{transform:scale(0.97)}
+.press:disabled{cursor:default}
+.press:disabled:active{transform:none}
+.marker{transition:left 420ms cubic-bezier(0.32,0.72,0,1)}
+.rise{animation:rise 460ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+.glass{background:rgba(255,255,255,0.74);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+@media (prefers-reduced-motion:reduce){.rise{animation-name:fade}.marker{transition:none}.press:active{transform:none}}
+@media (prefers-reduced-transparency:reduce){.glass{background:#FFFFFF;-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+@media (prefers-contrast:more){.glass{background:#FFFFFF !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;outline:1px solid #17141F}}
+/* Aba visitada com frequência: sem entrada animada. O marcador do ritmo desliza com transform (não com left) */
+.rise{animation:none}
+.marker{transition:transform 320ms var(--ease-in-out)}
+@media (prefers-reduced-motion:reduce){.marker{transition:none}}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 1300px; position: relative; overflow: hidden; background: #F4F2F9">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 300px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+
+<main style="position: relative; padding: 62px 20px 140px; display: flex; flex-direction: column; gap: 12px">
+<header style="display: flex; flex-direction: column; gap: 4px; padding: 0 4px 4px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Como foi a semana</p>
+<h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Resumo da semana</h1>
+</header>
+
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 28px; background: rgba(255,255,255,0.72)">
+<button type="button" class="press" aria-label="Semana anterior" onClick="{{ prev }}" disabled="{{ prevOff }}" style="width: 44px; height: 44px; flex: none; border: 0; border-radius: 22px; background: #FFFFFF; color: #17141F; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{ prevOpacity }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg></button>
+<div aria-live="polite" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0">
+<span class="num" style="font-size: 16px; font-weight: 750">Semana {{ n }}</span>
+<span class="num" style="font-size: 12px; font-weight: 600; color: #5E5870">{{ range }}</span>
+</div>
+<button type="button" class="press" aria-label="Próxima semana" onClick="{{ next }}" disabled="{{ nextOff }}" style="width: 44px; height: 44px; flex: none; border: 0; border-radius: 22px; background: #FFFFFF; color: #17141F; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{ nextOpacity }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+</div>
+
+<section class="rise" aria-labelledby="verdict-h" style="background: #FFFFFF; border-radius: 28px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(40,24,90,0.04), 0 12px 32px rgba(60,36,130,0.07)">
+<div style="display: flex; gap: 12px; align-items: flex-start">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: {{ st.bg }}; color: {{ st.fg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ st.icon }}"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<h2 id="verdict-h" style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 750; letter-spacing: -0.02em">{{ st.title }}</h2>
+<p class="num" style="margin: 0; font-size: 14px; line-height: 1.45; font-weight: 550; color: #4F4A5C; text-wrap: pretty">{{ verdictText }}</p>
+</div>
+</div>
+<sc-if value="{{ hasRitmo }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid #F0EDF5">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-size: 13px; font-weight: 650; color: #4F4A5C">Ritmo das 2 últimas semanas</span>
+<span class="num" style="font-size: 15px; font-weight: 750">{{ ritmoText }} kg/sem</span>
+</div>
+<div role="img" aria-label="Ritmo {{ ritmoText }} kg por semana. Faixa saudável de 0,10 a 0,40, ideal 0,25." style="position: relative; height: 34px">
+<div style="position: absolute; left: 0; right: 0; top: 11px; height: 12px; display: flex; gap: 3px">
+<span style="width: 20%; border-radius: 6px 3px 3px 6px; background: #F6DFBC"></span>
+<span style="width: 60%; border-radius: 3px; background: #CDEBD9"></span>
+<span style="width: 20%; border-radius: 3px 6px 6px 3px; background: #F6DFBC"></span>
+</div>
+<span style="position: absolute; left: 50%; top: 7px; width: 2px; height: 20px; margin-left: -1px; border-radius: 1px; background: #17673D"></span>
+<span class="marker" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 6px; height: 22px; transform: translateX({{ markerLeft }})"><span style="position: absolute; left: 0; top: 0; width: 22px; height: 22px; margin-left: -11px; border-radius: 11px; background: #FFFFFF; border: 5px solid #17141F; box-shadow: 0 2px 6px rgba(23,20,31,0.25)"></span></span>
+</div>
+<div class="num" style="position: relative; height: 16px; font-size: 12px; font-weight: 600; color: #5E5870">
+<span style="position: absolute; left: 0">lento</span>
+<span style="position: absolute; left: 20%; transform: translateX(-50%)">0,10</span>
+<span style="position: absolute; left: 50%; transform: translateX(-50%); color: #17673D; font-weight: 700">0,25 ideal</span>
+<span style="position: absolute; left: 80%; transform: translateX(-50%)">0,40</span>
+<span style="position: absolute; right: 0">rápido</span>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="rise" aria-labelledby="sug-h" style="animation-delay: 60ms; background: #17141F; color: #FFFFFF; border-radius: 28px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+<h2 id="sug-h" style="margin: 0; font-size: 13px; font-weight: 650; color: rgba(255,255,255,0.74)">Calorias para a semana {{ nextN }}</h2>
+<p class="num" style="margin: 0; display: flex; align-items: baseline; gap: 6px"><span style="font-size: 38px; line-height: 1.05; font-weight: 750; letter-spacing: -0.035em">{{ sugText }}</span><span style="font-size: 15px; font-weight: 650; color: rgba(255,255,255,0.74)">kcal/dia</span></p>
+<p class="num" style="margin: 0 0 8px; font-size: 14px; line-height: 1.4; font-weight: 550; color: rgba(255,255,255,0.8)">{{ sugWhy }}</p>
+<sc-if value="{{ isLatest }}" hint-placeholder-val="{{ true }}">
+<button type="button" class="press" aria-pressed="{{ applied }}" onClick="{{ apply }}" style="height: 48px; border: 0; border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 700; cursor: pointer; background: {{ applyBg }}; color: {{ applyFg }}">{{ applyText }}</button>
+</sc-if>
+<sc-if value="{{ isPast }}" hint-placeholder-val="{{ false }}">
+<p class="num" style="margin: 0; height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 20px; background: rgba(255,255,255,0.1); font-size: 13px; font-weight: 650">{{ pastText }}</p>
+</sc-if>
+</section>
+
+<div class="rise" style="animation-delay: 120ms; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{ tiles }}" as="t" hint-placeholder-count="6">
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 14px 13px; display: flex; flex-direction: column; gap: 3px">
+<span style="font-size: 12px; font-weight: 650; color: #5E5870">{{ t.label }}</span>
+<span class="num" style="font-size: 21px; line-height: 1.15; font-weight: 750; letter-spacing: -0.02em">{{ t.value }} <span style="font-size: 12px; font-weight: 650; color: #5E5870">{{ t.unit }}</span></span>
+<span class="num" style="font-size: 12px; font-weight: 600; color: {{ t.subFg }}">{{ t.sub }}</span>
+</div>
+</sc-for>
+</div>
+
+<section class="rise" aria-labelledby="med-h" style="animation-delay: 180ms; background: #FFFFFF; border-radius: 28px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(40,24,90,0.04)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="med-h" style="margin: 0; font-size: 16px; font-weight: 700">Medidas</h2>
+<span style="height: 26px; padding: 0 10px; border-radius: 13px; display: flex; align-items: center; font-size: 12px; font-weight: 700; background: {{ zBg }}; color: {{ zFg }}">{{ zChip }}</span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; font-weight: 550; color: #4F4A5C">{{ zText }}</p>
+<dl style="margin: 0; display: flex; flex-direction: column">
+<sc-for list="{{ medidas }}" as="m" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid #F0EDF5">
+<dt style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 15px; font-weight: 650">{{ m.name }}</span>
+<span class="num" style="font-size: 12px; font-weight: 550; color: #5E5870">{{ m.sub }}</span>
+</dt>
+<dd class="num" style="margin: 0; font-size: 16px; font-weight: 750">{{ m.value }}</dd>
+</div>
+</sc-for>
+</dl>
+</section>
+</main>
+
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 130px; background: linear-gradient(to top, rgba(244,242,249,0.96) 35%, rgba(244,242,249,0)); pointer-events: none"></div>
+
+<nav aria-label="Navegação principal" style="position: absolute; left: 16px; right: 16px; bottom: max(22px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px">
+<div class="glass" style="flex: 1; height: 64px; border-radius: 32px; padding: 6px; display: flex; align-items: center; gap: 2px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 30px rgba(52,30,110,0.14), 0 1px 2px rgba(52,30,110,0.08)">
+<a href="Main.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"></path></svg>Hoje</a>
+<a href="Evolucao.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5h16"></path><path d="m5 15 4.5-4.5 3.5 3 6-6.5"></path><path d="M15 7h4v4"></path></svg>Evolução</a>
+<a href="Semana.dc.html" aria-current="page" class="press" style="flex: 1; height: 52px; border-radius: 26px; background: #17141F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3.5"></rect><path d="M8 3v4M16 3v4M4 10h16"></path><path d="m9.5 14.8 1.8 1.8 3.4-3.6"></path></svg>Semana</a>
+<a href="Ajustes.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"></path><circle cx="15.5" cy="7" r="2.3"></circle><circle cx="9.5" cy="17" r="2.3"></circle></svg>Ajustes</a>
+</div>
+<a href="AddAlimento.dc.html" class="press" aria-label="Adicionar alimento" style="width: 64px; height: 64px; flex: none; border-radius: 32px; background: #7C4DEB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 10px 24px rgba(124,77,235,0.38)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { idx: 5, applied: false };
+  }
+  renderVals() {
+    const weeks = [
+      { n: 1, range: '28 out – 3 nov', peso: 74.300, dias: 7, g: null, h: null, gain: 0.300, kcal: 3021, meta: 2900, gasto: 2614, saldo: 407, braco: 0.0, abd: 0.0, dobra: 0.0, dobraX: null },
+      { n: 2, range: '4 – 10 nov', peso: 74.657, dias: 7, g: 0.357, h: 0.357, gain: 0.657, kcal: 2960, meta: 2900, gasto: 2677, saldo: 283, braco: 0.1, abd: 0.3, dobra: 0.4, dobraX: 0.4 },
+      { n: 3, range: '11 – 17 nov', peso: 74.771, dias: 7, g: 0.114, h: 0.236, gain: 0.771, kcal: 2890, meta: 2900, gasto: 2694, saldo: 196, braco: 0.1, abd: 0.2, dobra: 0.3, dobraX: -0.1 },
+      { n: 4, range: '18 – 24 nov', peso: 74.829, dias: 7, g: 0.057, h: 0.086, gain: 0.829, kcal: 2900, meta: 2900, gasto: 2723, saldo: 177, braco: 0.3, abd: 0.3, dobra: 0.4, dobraX: 0.1 },
+      { n: 5, range: '25 nov – 1 dez', peso: 75.100, dias: 7, g: 0.271, h: 0.164, gain: 1.100, kcal: 3080, meta: 3075, gasto: 2743, saldo: 337, braco: 0.5, abd: 0.6, dobra: 0.8, dobraX: 0.4 },
+      { n: 6, range: '2 – 8 dez', peso: 75.367, dias: 6, g: 0.267, h: 0.269, gain: 1.367, kcal: 3075, meta: 3075, gasto: 2730, saldo: 345, braco: 0.6, abd: 0.7, dobra: 0.9, dobraX: 0.1 }
+    ];
+    const MIN = 0.1, MAX = 0.4, ADJ = 175, LIM = 1.0;
+    const i = this.state.idx;
+    const w = weeks[i];
+    const f = (n, d) => n.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+    const kc = (n) => Math.round(n).toLocaleString('pt-BR');
+    const sg = (n, d) => (n > 0 ? '+' : n < 0 ? '−' : '±') + f(Math.abs(n), d);
+    const sgk = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + kc(Math.abs(n));
+
+    const ICON = {
+      check: 'M5 12.5 9.5 17 19 7.5',
+      up: 'M12 19V5M6 11l6-6 6 6',
+      down: 'M12 5v14M6 13l6 6 6-6',
+      wait: 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
+      flag: 'M6 21V4M6 4h11l-2 4 2 4H6'
+    };
+    let st, adj = 0;
+    if (w.h === null) st = { title: 'Semana de base', bg: '#EEE7FD', fg: '#5B34C7', icon: ICON.flag };
+    else if (w.n < 3) st = { title: 'Adaptação — aguarde', bg: '#EEE7FD', fg: '#5B34C7', icon: ICON.wait };
+    else if (w.h < MIN) { st = { title: 'Abaixo do ritmo — some 175 kcal', bg: '#FFF1DC', fg: '#8A4B00', icon: ICON.up }; adj = ADJ; }
+    else if (w.h > MAX) { st = { title: 'Rápido demais — reduza 175 kcal', bg: '#FFF1DC', fg: '#8A4B00', icon: ICON.down }; adj = -ADJ; }
+    else st = { title: 'No ritmo — mantenha', bg: '#E2F4E9', fg: '#17673D', icon: ICON.check };
+    const dobraAlert = w.dobraX !== null && w.dobraX > LIM;
+    if (dobraAlert) adj = -ADJ;
+
+    let verdictText = 'Média de ' + f(w.peso, 2) + ' kg';
+    if (w.g !== null) verdictText += ', ' + sg(w.g, 2) + ' kg sobre a semana ' + (w.n - 1) + '.';
+    else verdictText += '. O ritmo começa a ser medido na semana 2.';
+    if (w.h !== null && w.n < 3) verdictText += ' As primeiras semanas sobem mais por água e glicogênio; avalie a partir da semana 3.';
+
+    const sug = w.kcal + adj;
+    let sugWhy = 'Sua média real da semana, sem ajuste.';
+    if (adj > 0) sugWhy = 'Média real (' + kc(w.kcal) + ') + 175 — o ritmo ficou abaixo de 0,10 kg/sem.';
+    if (adj < 0) sugWhy = 'Média real (' + kc(w.kcal) + ') − 175 — ' + (dobraAlert ? 'a dobra abdominal subiu acima do limite.' : 'o ritmo passou de 0,40 kg/sem.');
+
+    const isLatest = i === weeks.length - 1;
+    const nextMeta = isLatest ? null : weeks[i + 1].meta;
+    const pastText = isLatest ? '' : (Math.abs(nextMeta - sug) <= 10
+      ? 'Aplicada na semana ' + (w.n + 1) + ' (' + kc(nextMeta) + ')'
+      : 'Meta da semana ' + (w.n + 1) + ' ficou em ' + kc(nextMeta));
+    const same = Math.abs(sug - w.meta) <= 10;
+    const applied = this.state.applied;
+    const applyText = applied
+      ? 'Meta da semana ' + (w.n + 1) + ': ' + kc(sug) + ' ✓'
+      : (same ? 'Confirmar meta de ' + kc(sug) : 'Usar ' + kc(sug) + ' como meta');
+
+    const tiles = [
+      { label: 'Média de peso', value: f(w.peso, 2), unit: 'kg', sub: w.dias + ' de 7 dias pesados', subFg: w.dias < 7 ? '#8A4B00' : '#5E5870' },
+      { label: 'Ganho total', value: sg(w.gain, 2), unit: 'kg', sub: 'esperado ' + sg(0.25 * w.n, 2), subFg: '#5E5870' },
+      { label: 'Média ingerida', value: kc(w.kcal), unit: 'kcal', sub: sgk(w.kcal - w.meta) + ' vs meta ' + kc(w.meta), subFg: '#5E5870' },
+      { label: 'Média gasta', value: kc(w.gasto), unit: 'kcal', sub: 'relógio', subFg: '#5E5870' },
+      { label: 'Saldo médio', value: sgk(w.saldo), unit: 'kcal/dia', sub: w.saldo < 200 ? 'abaixo de +200' : (w.saldo > 300 ? 'acima de +300' : 'na faixa +200 a +300'), subFg: (w.saldo < 200 || w.saldo > 300) ? '#8A4B00' : '#17673D' },
+      { label: 'Calorias anotadas', value: '7/7', unit: 'dias', sub: 'semana completa', subFg: '#5E5870' }
+    ];
+
+    let z = { chip: 'Estável', text: 'Estável — continue medindo.', bg: '#F1EEF6', fg: '#4A3F66' };
+    if (dobraAlert) z = { chip: 'Atenção', text: 'Dobra subindo rápido — atenção à gordura.', bg: '#FFF1DC', fg: '#8A4B00' };
+    else if (w.braco > 0 && w.dobra <= LIM) z = { chip: 'Ganho de qualidade', text: 'Braço sobe e a dobra abdominal fica controlada.', bg: '#E2F4E9', fg: '#17673D' };
+
+    const medidas = [
+      { name: 'Braço', sub: 'desde a semana 1', value: sg(w.braco, 1) + ' cm' },
+      { name: 'Abdômen', sub: 'desde a semana 1', value: sg(w.abd, 1) + ' cm' },
+      { name: 'Dobra abdominal', sub: w.dobraX === null ? 'base da medição' : sg(w.dobraX, 1) + ' vs semana anterior · limite 1,0', value: sg(w.dobra, 1) + ' mm' }
+    ];
+
+    const go = (d) => () => {
+      const n = Math.max(0, Math.min(weeks.length - 1, this.state.idx + d));
+      this.setState({ idx: n });
+    };
+
+    return {
+      n: w.n,
+      range: w.range,
+      prev: go(-1),
+      next: go(1),
+      prevOff: i === 0,
+      nextOff: isLatest,
+      prevOpacity: i === 0 ? 0.4 : 1,
+      nextOpacity: isLatest ? 0.4 : 1,
+      st,
+      verdictText,
+      hasRitmo: w.h !== null,
+      ritmoText: w.h === null ? '' : sg(w.h, 2),
+      markerLeft: w.h === null ? '0%' : (Math.max(0, Math.min(1, w.h / 0.5)) * 100).toFixed(1) + '%',
+      nextN: w.n + 1,
+      sugText: kc(sug),
+      sugWhy,
+      isLatest,
+      isPast: !isLatest,
+      pastText,
+      applied,
+      apply: () => this.setState({ applied: !this.state.applied }),
+      applyText,
+      applyBg: applied ? '#2C2838' : '#FFFFFF',
+      applyFg: applied ? '#FFFFFF' : '#17141F',
+      tiles,
+      zChip: z.chip,
+      zText: z.text,
+      zBg: z.bg,
+      zFg: z.fg,
+      medidas
+    };
+  }
+}
+</script>
+</body>
+</html>

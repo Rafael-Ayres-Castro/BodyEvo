@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rumo</title>
+  <meta name="description" content="Acompanhamento de bulking: peso, refeições, macros e medidas.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#EFE8FB" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#EFE8FB" media="(prefers-color-scheme: dark)">
+
+  <!-- PWA / iOS -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rumo">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="palco">
+
+  <!-- 0 · Entrar -->
+  <main class="view" data-view="login" hidden aria-labelledby="login-h">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo login" id="login"></div>
+  </main>
+
+  <!-- 1 · Hoje -->
+  <main class="view view-aba" data-view="hoje" hidden aria-label="Hoje">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="hoje"></div>
+  </main>
+
+  <!-- 5 · Evolução -->
+  <main class="view view-aba" data-view="evolucao" hidden aria-label="Evolução">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="evolucao"></div>
+  </main>
+
+  <!-- 4 · Resumo da semana -->
+  <main class="view view-aba" data-view="semana" hidden aria-label="Resumo da semana">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="semana"></div>
+  </main>
+
+  <!-- 6 · Ajustes -->
+  <main class="view view-aba" data-view="ajustes" hidden aria-label="Ajustes">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo ajustes" id="ajustes"></div>
+  </main>
+
+  <!-- 8 · Refeição -->
+  <main class="view" data-view="refeicao" hidden aria-label="Refeição">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="refeicao"></div>
+  </main>
+
+  <!-- 9 · Meus alimentos -->
+  <main class="view" data-view="alimentos" hidden aria-label="Meus alimentos">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="alimentos"></div>
+  </main>
+
+  <!-- 10 · Novo alimento -->
+  <main class="view" data-view="alimento" hidden aria-label="Alimento">
+    <div class="conteudo" id="alimento"></div>
+  </main>
+
+  <!-- 11 · Metas de macros -->
+  <main class="view" data-view="metas" hidden aria-label="Metas de macros">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="metas"></div>
+  </main>
+
+  <!-- 3 · Check-in semanal -->
+  <main class="view" data-view="checkin" hidden aria-label="Check-in semanal">
+    <div class="brilho" aria-hidden="true"></div>
+    <div class="conteudo" id="checkin"></div>
+  </main>
+
+  <div class="desbotar is-off" aria-hidden="true"></div>
+
+  <nav id="abas" class="is-off" aria-label="Navegação principal">
+    <div class="abas-vidro vidro">
+      <a href="#hoje" class="aba press" data-aba="hoje">
+        <svg class="ic" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.9" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Hoje</a>
+      <a href="#evolucao" class="aba press" data-aba="evolucao">
+        <svg class="ic" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.9" aria-hidden="true"><path d="M4 19.5h16"/><path d="m5 15 4.5-4.5 3.5 3 6-6.5"/><path d="M15 7h4v4"/></svg>Evolução</a>
+      <a href="#semana" class="aba press" data-aba="semana">
+        <svg class="ic" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.9" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3.5"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="m9.5 14.8 1.8 1.8 3.4-3.6"/></svg>Semana</a>
+      <a href="#ajustes" class="aba press" data-aba="ajustes">
+        <svg class="ic" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.9" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"/><circle cx="15.5" cy="7" r="2.3"/><circle cx="9.5" cy="17" r="2.3"/></svg>Ajustes</a>
+    </div>
+    <button type="button" class="botao-mais press" data-acao="abrir-add" aria-label="Adicionar alimento">
+      <svg class="ic" width="26" height="26" viewBox="0 0 24 24" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </nav>
+</div>
+
+<div id="scrim" hidden data-acao="fechar-sheet"></div>
+
+<!-- 2 · Peso e gasto do dia -->
+<section class="sheet" id="sheet-peso" role="dialog" aria-modal="true" aria-labelledby="peso-h" hidden>
+  <div class="sheet-arraste sheet-cabeca">
+    <div class="alca" aria-hidden="true"></div>
+    <div class="sheet-topo pad">
+      <div class="col2">
+        <h1 id="peso-h" class="sheet-titulo">Peso e gasto de hoje</h1>
+        <p class="sheet-sub num" id="peso-sub"></p>
+      </div>
+      <button type="button" class="btn-fechar press" data-acao="fechar-sheet" aria-label="Fechar">
+        <svg class="ic" width="18" height="18" viewBox="0 0 24 24" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="sheet-corpo" id="peso-corpo"></div>
+</section>
+
+<!-- 7 · Adicionar alimento -->
+<section class="sheet" id="sheet-add" role="dialog" aria-modal="true" aria-labelledby="add-h" hidden>
+  <div class="add-topo">
+    <div class="sheet-arraste pilha-12">
+      <div class="alca" aria-hidden="true"></div>
+      <div class="sheet-topo">
+        <div class="col2">
+          <h1 id="add-h" class="sheet-titulo">Adicionar alimento</h1>
+          <p class="sheet-sub num" id="add-sub" hidden></p>
+        </div>
+        <button type="button" class="btn-fechar press" data-acao="fechar-sheet" aria-label="Fechar">
+          <svg class="ic" width="18" height="18" viewBox="0 0 24 24" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="grade-opcoes" role="group" aria-label="Refeição" id="add-refeicoes"></div>
+    <label class="busca">
+      <svg class="ic" width="18" height="18" viewBox="0 0 24 24" style="stroke: var(--texto-2)" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+      <span class="sr-only">Buscar alimento</span>
+      <input type="search" id="add-busca" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Buscar nos meus alimentos" data-campo="add-busca">
+    </label>
+    <div class="lista-titulo">
+      <h2 id="add-lista-titulo"></h2>
+      <button type="button" class="link link-13 hit" data-acao="ver-alimentos">Ver todos</button>
+    </div>
+  </div>
+  <div class="add-lista" id="add-lista"></div>
+  <div class="painel" id="add-painel"></div>
+</section>
+
+<!-- Editor genérico (Ajustes) -->
+<section class="sheet" id="sheet-editor" role="dialog" aria-modal="true" aria-labelledby="editor-h" hidden>
+  <div class="sheet-arraste sheet-cabeca">
+    <div class="alca" aria-hidden="true"></div>
+    <div class="sheet-topo pad">
+      <h1 id="editor-h" class="sheet-titulo"></h1>
+      <button type="button" class="btn-fechar press" data-acao="fechar-sheet" aria-label="Fechar">
+        <svg class="ic" width="18" height="18" viewBox="0 0 24 24" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <form class="sheet-corpo" id="editor-corpo" novalidate></form>
+</section>
+
+<!-- 12 · Resumo do dia -->
+<div id="resumo" hidden>
+  <div class="resumo-scrim" data-acao="resumo-revisar" aria-hidden="true"></div>
+  <section class="resumo-cartao" role="dialog" aria-modal="true" aria-labelledby="resumo-h" id="resumo-cartao"></section>
+</div>
+
+<div id="aviso" role="status" aria-live="polite"><span></span><button type="button" hidden></button></div>
+
+<input type="file" id="arquivo-importar" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+
+<script src="vendor/supabase.min.js"></script>
+<script src="regras.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

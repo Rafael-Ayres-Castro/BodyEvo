@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Adicionar alimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app input{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app input::placeholder{color:#8A8496}
+.app input:focus-visible{outline:none}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.field:focus-within{box-shadow:0 0 0 2px #7C4DEB}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1),background-color 160ms ease,color 160ms ease,box-shadow 160ms ease}
+.press:active{transform:scale(0.97)}
+.sheet{animation:sheet 520ms cubic-bezier(0.32,0.72,0,1) backwards}
+@keyframes sheet{from{transform:translateY(100%)}}
+.pushback{transform-origin:50% 0;animation:push 520ms cubic-bezier(0.32,0.72,0,1) backwards}
+@keyframes push{from{transform:none}}
+.scrim{animation:fade 420ms ease-out backwards}
+@keyframes fade{from{opacity:0}}
+.list{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (prefers-reduced-motion:reduce){.sheet,.pushback{animation-name:fade}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.app input::placeholder{color:#6F6982}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+/* Sheet: curva de drawer do iOS, dentro de 500 ms */
+.sheet,.pushback{animation-duration:440ms;animation-timing-function:var(--ease-drawer)}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0A14">
+
+<div class="pushback" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; transform: translateY(12px) scale(0.92); border-radius: 44px; overflow: hidden; background: #F4F2F9">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 320px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+<div style="position: relative; padding: 62px 24px 0; display: flex; flex-direction: column; gap: 4px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Quarta, 9 de dezembro</p>
+<p style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Semana 7 do bulking</p>
+</div>
+<div style="position: relative; margin: 18px 20px 0; height: 70px; border-radius: 20px; background: rgba(255,255,255,0.6)"></div>
+<div style="position: relative; margin: 12px 20px 0; height: 420px; border-radius: 28px; background: #FFFFFF"></div>
+</div>
+<div class="scrim" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: rgba(13,10,20,0.32)"></div>
+
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="add-h" style="position: absolute; left: 0; right: 0; top: 56px; bottom: 0; background: #F4F2F9; border-radius: 34px 34px 0 0; overflow: hidden; box-shadow: 0 -12px 40px rgba(0,0,0,0.18)">
+<div style="padding: 8px 20px 0; display: flex; flex-direction: column; gap: 12px">
+<div aria-hidden="true" style="width: 36px; height: 5px; border-radius: 3px; background: #CFC9DA; align-self: center"></div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<h1 id="add-h" style="margin: 0; font-size: 22px; line-height: 1.15; font-weight: 750; letter-spacing: -0.022em">Adicionar alimento</h1>
+<a href="Main.dc.html" class="press" aria-label="Fechar" style="width: 44px; height: 44px; border-radius: 22px; background: #E9E5F1; color: #3B3548; display: flex; align-items: center; justify-content: center; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+</div>
+
+<div role="group" aria-label="Refeição" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: #E9E5F1">
+<sc-for list="{{ meals }}" as="m" hint-placeholder-count="5">
+<button type="button" class="press" aria-pressed="{{ m.on }}" onClick="{{ m.pick }}" style="height: 38px; border: 0; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; background: {{ m.bg }}; color: {{ m.fg }}; box-shadow: {{ m.shadow }}">{{ m.label }}</button>
+</sc-for>
+</div>
+
+<label class="field" style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border-radius: 16px; background: #FFFFFF">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E5870" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">Buscar alimento</span>
+<input type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" placeholder="Buscar nos meus alimentos" value="{{ q }}" onChange="{{ onQ }}" style="flex: 1; min-width: 0; border: 0; background: transparent; padding: 0; font-size: 16px; font-weight: 550; color: #17141F">
+</label>
+
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 2px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 700; color: #5E5870">{{ listTitle }}</h2>
+<a href="Alimentos.dc.html" class="hit" style="font-size: 13px; font-weight: 700; color: #5B34C7; text-decoration: none; padding: 6px 0">Ver todos</a>
+</div>
+</div>
+
+<div class="list" style="position: absolute; left: 0; right: 0; top: 240px; bottom: 0; padding: 4px 20px 360px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ foods }}" as="f" hint-placeholder-count="6">
+<button type="button" class="press" aria-pressed="{{ f.on }}" onClick="{{ f.pick }}" style="width: 100%; min-height: 58px; border: 0; border-radius: 16px; padding: 8px 12px 8px 14px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer; background: #FFFFFF; box-shadow: {{ f.ring }}">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 700; color: #17141F">{{ f.name }}</span>
+<span class="num" style="font-size: 12px; font-weight: 600; color: #5E5870">{{ f.sub }}</span>
+</span>
+<span class="num" style="font-size: 12px; font-weight: 650; color: #5E5870">{{ f.last }}</span>
+<span aria-hidden="true" style="width: 24px; height: 24px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: {{ f.dotBg }}; color: #FFFFFF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></span>
+</button>
+</sc-for>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+<p style="margin: 8px 0; text-align: center; font-size: 14px; font-weight: 600; color: #5E5870">Nada com “{{ q }}” nos seus alimentos.</p>
+</sc-if>
+<a href="NovoAlimento.dc.html" class="press" style="min-height: 52px; border-radius: 16px; border: 1.5px dashed #C9C2D6; display: flex; align-items: center; justify-content: center; gap: 8px; color: #4A3F66; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Cadastrar novo alimento</a>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 20px max(30px, calc(env(safe-area-inset-bottom) + 12px)); background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -8px 30px rgba(40,24,90,0.12); display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<p style="margin: 0; font-size: 17px; font-weight: 750; letter-spacing: -0.01em">{{ sel.name }}</p>
+<p class="num" style="margin: 0; font-size: 12px; font-weight: 600; color: #5E5870">{{ sel.per100 }}</p>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<button type="button" class="press" aria-label="Menos 10 gramas" onClick="{{ minus }}" style="width: 52px; height: 56px; flex: none; border: 0; border-radius: 16px; background: #F1EEF6; color: #17141F; font-size: 14px; font-weight: 750; cursor: pointer">−10</button>
+<label class="field" for="gramas" style="flex: 1; min-width: 0; height: 56px; padding: 0 16px; border-radius: 16px; background: #F6F4FA; display: flex; align-items: center; gap: 6px">
+<span style="font-size: 12px; font-weight: 650; color: #5E5870; white-space: nowrap">Peso na balança</span>
+<input id="gramas" class="num" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" value="{{ gText }}" onChange="{{ onG }}" onFocus="{{ selectAll }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 28px; font-weight: 750; letter-spacing: -0.02em; color: #17141F">
+<span style="font-size: 16px; font-weight: 700; color: #5E5870">g</span>
+</label>
+<button type="button" class="press" aria-label="Mais 10 gramas" onClick="{{ plus }}" style="width: 52px; height: 56px; flex: none; border: 0; border-radius: 16px; background: #F1EEF6; color: #17141F; font-size: 14px; font-weight: 750; cursor: pointer">+10</button>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<button type="button" class="press hit" onClick="{{ useLast }}" style="height: 32px; padding: 0 12px; border: 0; border-radius: 16px; background: #EEE7FD; color: #4A2CA8; font-size: 13px; font-weight: 700; cursor: pointer">{{ lastText }}</button>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">Zere a balança com o prato antes</span>
+</div>
+<div aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; border-top: 1px solid #F0EDF5">
+<p class="num" style="margin: 0; display: flex; align-items: baseline; gap: 4px"><span style="font-size: 30px; line-height: 1; font-weight: 750; letter-spacing: -0.03em">{{ kcal }}</span><span style="font-size: 14px; font-weight: 650; color: #5E5870">kcal</span></p>
+<div class="num" style="display: flex; gap: 6px">
+<span style="height: 28px; padding: 0 9px; border-radius: 14px; display: flex; align-items: center; background: #EEE7FD; color: #4A2CA8; font-size: 12px; font-weight: 750">P {{ p }}</span>
+<span style="height: 28px; padding: 0 9px; border-radius: 14px; display: flex; align-items: center; background: #E4EEFC; color: #1F4F94; font-size: 12px; font-weight: 750">C {{ c }}</span>
+<span style="height: 28px; padding: 0 9px; border-radius: 14px; display: flex; align-items: center; background: #FBEFD7; color: #7A4E00; font-size: 12px; font-weight: 750">G {{ g }}</span>
+</div>
+</div>
+<a href="Main.dc.html" class="press" style="height: 54px; border-radius: 27px; background: #17141F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; text-decoration: none">
+<span style="font-size: 16px; font-weight: 700">{{ cta }}</span>
+<span class="num" style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.72)">{{ mealDelta }}</span>
+</a>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { meal: 3, key: 'patinho', gText: '120', q: '' };
+  }
+  renderVals() {
+    const s = this.state;
+    const F = {
+      arroz: ['Arroz branco cozido', 128, 2.5, 28.1, 0.2, 220],
+      aveia: ['Aveia em flocos', 394, 13.9, 66.6, 8.5, 50],
+      azeite: ['Azeite de oliva', 884, 0, 0, 100, 10],
+      banana: ['Banana prata', 98, 1.3, 26.0, 0.1, 120],
+      batata: ['Batata-doce cozida', 77, 0.6, 18.4, 0.1, 250],
+      brocolis: ['Brócolis cozido', 25, 2.1, 4.4, 0.5, 80],
+      feijao: ['Feijão carioca cozido', 76, 4.8, 13.6, 0.5, 160],
+      iogurte: ['Iogurte natural', 51, 4.1, 1.9, 3.0, 170],
+      mel: ['Mel', 309, 0, 84.0, 0, 15],
+      ovo: ['Ovo inteiro cozido', 146, 13.3, 0.6, 9.5, 150],
+      pao: ['Pão de forma integral', 253, 9.4, 49.9, 3.7, 75],
+      amendoim: ['Pasta de amendoim', 588, 25.1, 20.0, 50.4, 20],
+      patinho: ['Patinho grelhado', 219, 35.9, 0, 7.3, 150],
+      frango: ['Peito de frango grelhado', 159, 32.0, 0, 2.5, 150],
+      queijo: ['Queijo minas frescal', 264, 17.4, 3.2, 20.2, 30],
+      whey: ['Whey protein', 400, 80, 8, 6, 30]
+    };
+    const MEALS = [
+      { label: 'Café', name: 'café da manhã', art: 'ao', base: 606, top: ['ovo', 'pao', 'banana', 'queijo', 'aveia', 'iogurte'] },
+      { label: 'Almoço', name: 'almoço', art: 'ao', base: 750, top: ['arroz', 'feijao', 'frango', 'patinho', 'azeite', 'brocolis'] },
+      { label: 'Lanche', name: 'lanche', art: 'ao', base: 579, top: ['aveia', 'whey', 'banana', 'amendoim', 'mel', 'iogurte'] },
+      { label: 'Jantar', name: 'jantar', art: 'ao', base: 237, top: ['patinho', 'batata', 'arroz', 'frango', 'azeite', 'brocolis'] },
+      { label: 'Ceia', name: 'ceia', art: 'à', base: 0, top: ['iogurte', 'aveia', 'banana', 'mel', 'whey', 'pao'] }
+    ];
+    const f1 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+    const kc = (n) => Math.round(n).toLocaleString('pt-BR');
+    const norm = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const meal = MEALS[s.meal];
+    const q = norm(s.q.trim());
+    const keys = q ? Object.keys(F).filter((k) => norm(F[k][0]).indexOf(q) !== -1) : meal.top;
+    const foods = keys.map((k) => {
+      const d = F[k];
+      const on = k === s.key;
+      return {
+        name: d[0],
+        sub: kc(d[1]) + ' kcal · P ' + f1(d[2]) + ' · C ' + f1(d[3]) + ' · G ' + f1(d[4]),
+        last: 'últ. ' + d[5] + ' g',
+        on,
+        ring: on ? 'inset 0 0 0 2px #7C4DEB' : '0 1px 2px rgba(40,24,90,0.05)',
+        dotBg: on ? '#7C4DEB' : '#E4DEEE',
+        pick: () => this.setState({ key: k, gText: String(this.state.key === k ? this.state.gText : F[k][5]) })
+      };
+    });
+    const d = F[s.key];
+    const g = Math.max(0, parseFloat(String(s.gText).replace(',', '.')) || 0);
+    const r = g / 100;
+    const add = d[1] * r;
+    const setG = (n) => this.setState({ gText: String(Math.max(0, Math.round(n))) });
+    return {
+      meals: MEALS.map((m, i) => ({
+        label: m.label,
+        on: i === s.meal,
+        bg: i === s.meal ? '#FFFFFF' : 'transparent',
+        fg: i === s.meal ? '#17141F' : '#5E5870',
+        shadow: i === s.meal ? '0 1px 2px rgba(23,20,31,0.08), 0 3px 8px rgba(23,20,31,0.06)' : 'none',
+        pick: () => this.setState({ meal: i })
+      })),
+      q: s.q,
+      onQ: (e) => this.setState({ q: String(e.target.value).slice(0, 40) }),
+      listTitle: q ? 'Resultados' : 'Mais usados no ' + (meal.art === 'à' ? 'horário da ceia' : meal.name),
+      foods,
+      empty: foods.length === 0,
+      sel: { name: d[0], per100: 'Por 100 g: ' + kc(d[1]) + ' kcal · P ' + f1(d[2]) + ' g · C ' + f1(d[3]) + ' g · G ' + f1(d[4]) + ' g' },
+      gText: s.gText,
+      selectAll: (e) => {
+        const el = e.target;
+        setTimeout(() => { try { el.setSelectionRange(0, String(el.value).length); } catch (err) {} }, 0);
+      },
+      onG: (e) => this.setState({ gText: String(e.target.value).replace(/[^0-9,.]/g, '').slice(0, 5) }),
+      minus: () => setG(g - 10),
+      plus: () => setG(g + 10),
+      useLast: () => setG(d[5]),
+      lastText: 'Última vez: ' + d[5] + ' g',
+      kcal: kc(add),
+      p: f1(d[2] * r) + ' g',
+      c: f1(d[3] * r) + ' g',
+      g: f1(d[4] * r) + ' g',
+      cta: 'Adicionar ' + meal.art + ' ' + meal.name,
+      mealDelta: meal.label + ': ' + kc(meal.base) + ' → ' + kc(meal.base + add) + ' kcal · dia: ' + kc(2172 + add) + ' de 3.075'
+    };
+  }
+}
+</script>
+</body>
+</html>

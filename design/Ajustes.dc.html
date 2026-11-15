@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ajustes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit;color:inherit}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:-2px}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1)}
+.press:active{transform:scale(0.97)}
+.row{transition:background-color 120ms ease}
+.row:active{background:#F3F0F8}
+.group>.row+.row,.group>.trow+.trow{border-top:1px solid #F0EDF5}
+.track{transition:background-color 200ms ease}
+.knob{transition:transform 260ms cubic-bezier(0.32,0.72,0,1)}
+.rise{animation:rise 460ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+.glass{background:rgba(255,255,255,0.74);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+@media (hover:hover) and (pointer:fine){.row:hover{background:#F7F5FB}}
+@media (prefers-reduced-motion:reduce){.rise{animation-name:fade}.knob{transition:none}.press:active{transform:none}}
+@media (prefers-reduced-transparency:reduce){.glass{background:#FFFFFF;-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+@media (prefers-contrast:more){.glass{background:#FFFFFF !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;outline:1px solid #17141F}}
+.rise{animation:none}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 1860px; position: relative; overflow: hidden; background: #F4F2F9">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 300px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+
+<main style="position: relative; padding: 62px 20px 140px; display: flex; flex-direction: column; gap: 8px">
+<header style="display: flex; flex-direction: column; gap: 4px; padding: 0 4px 12px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Rafael · bulking leve desde 28 out</p>
+<h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Ajustes</h1>
+</header>
+
+<h2 style="margin: 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Objetivo</h2>
+<div class="group rise" style="background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<button type="button" class="row" style="width: 100%; min-height: 52px; border: 0; background: transparent; padding: 0 14px 0 16px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer"><span style="flex: 1; font-size: 16px; font-weight: 600">Data de início</span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">28/10/2026</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+<button type="button" class="row" style="width: 100%; min-height: 52px; border: 0; background: transparent; padding: 0 14px 0 16px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer"><span style="flex: 1; font-size: 16px; font-weight: 600">Peso inicial → alvo</span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">74,0 → 80,0 kg</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+<button type="button" class="row" style="width: 100%; min-height: 60px; border: 0; background: transparent; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer"><span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 600">Ganho semanal</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">ideal 0,25 · média das 2 últimas semanas</span></span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">0,10–0,40 kg</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+<button type="button" class="row" style="width: 100%; min-height: 60px; border: 0; background: transparent; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer"><span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 600">Limite da dobra abdominal</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">acima disso, alerta e −175 kcal</span></span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">1,0 mm/sem</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+</div>
+
+<h2 style="margin: 16px 0 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Alimentação</h2>
+<div class="group rise" style="animation-delay: 40ms; background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<button type="button" class="row" style="width: 100%; min-height: 60px; border: 0; background: transparent; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer"><span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 600">Meta de calorias</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">±175 quando fora do ritmo · era 2.900</span></span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">3.075 kcal</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></button>
+<a href="Metas.dc.html" class="row" style="min-height: 60px; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 10px; text-decoration: none"><span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 600">Metas de macros</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">metas e limites por dia</span></span><span class="num" style="font-size: 14px; font-weight: 600; color: #5E5870">P 166 · C 400 · G 90</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></a>
+<a href="Alimentos.dc.html" class="row" style="min-height: 52px; padding: 0 14px 0 16px; display: flex; align-items: center; gap: 10px; text-decoration: none"><span style="flex: 1; font-size: 16px; font-weight: 600">Meus alimentos</span><span class="num" style="font-size: 15px; font-weight: 600; color: #5E5870">16</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8496" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg></a>
+</div>
+
+<h2 style="margin: 16px 0 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Minhas refeições</h2>
+<div class="group rise" style="animation-delay: 80ms; background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<sc-for list="{{ refeicoes }}" as="t" hint-placeholder-count="7">
+<div class="trow" style="min-height: 56px; padding: 6px 14px 6px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; display: flex; align-items: baseline; gap: 8px"><span id="{{ t.id }}" style="font-size: 16px; font-weight: 600">{{ t.label }}</span><span class="num" style="font-size: 13px; font-weight: 600; color: #5E5870">{{ t.sub }}</span></span>
+<button type="button" role="switch" aria-checked="{{ t.on }}" aria-labelledby="{{ t.id }}" onClick="{{ t.toggle }}" class="track hit" style="position: relative; width: 52px; height: 32px; flex: none; border: 0; border-radius: 16px; padding: 0; cursor: pointer; background: {{ t.bg }}">
+<span class="knob" style="position: absolute; left: 2px; top: 2px; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(23,20,31,0.22); transform: translateX({{ t.x }})"></span>
+</button>
+</div>
+</sc-for>
+</div>
+<p class="num" style="margin: 0; padding: 0 16px; font-size: 12px; line-height: 1.4; font-weight: 550; color: #5E5870">{{ refeicoesNote }}</p>
+
+<h2 style="margin: 16px 0 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Calorias gastas</h2>
+<div class="group rise" style="animation-delay: 120ms; background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<button type="button" class="row" style="width: 100%; min-height: 64px; border: 0; background: transparent; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 11px; background: #E4EEFC; color: #1F4F94; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="6"></circle><path d="M9 3.5h6M9 20.5h6M12 9.5V12l1.5 1.5"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 16px; font-weight: 600">Garmin Connect</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">total do dia: ativas + repouso · 19:00</span></span>
+<span style="display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 13px; background: #E2F4E9; color: #17673D; font-size: 12px; font-weight: 700"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 4px; background: #22A05A"></span>Conectado</span>
+</button>
+<sc-for list="{{ gasto }}" as="t" hint-placeholder-count="1">
+<div class="trow" style="min-height: 60px; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span id="{{ t.id }}" style="font-size: 16px; font-weight: 600">{{ t.label }}</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">{{ t.sub }}</span></span>
+<button type="button" role="switch" aria-checked="{{ t.on }}" aria-labelledby="{{ t.id }}" onClick="{{ t.toggle }}" class="track hit" style="position: relative; width: 52px; height: 32px; flex: none; border: 0; border-radius: 16px; padding: 0; cursor: pointer; background: {{ t.bg }}">
+<span class="knob" style="position: absolute; left: 2px; top: 2px; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(23,20,31,0.22); transform: translateX({{ t.x }})"></span>
+</button>
+</div>
+</sc-for>
+</div>
+
+<h2 style="margin: 16px 0 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Lembretes</h2>
+<div class="group rise" style="animation-delay: 160ms; background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<sc-for list="{{ lembretes }}" as="t" hint-placeholder-count="3">
+<div class="trow" style="min-height: 60px; padding: 8px 14px 8px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span id="{{ t.id }}" style="font-size: 16px; font-weight: 600">{{ t.label }}</span><span style="font-size: 12px; font-weight: 550; color: #5E5870">{{ t.sub }}</span></span>
+<button type="button" role="switch" aria-checked="{{ t.on }}" aria-labelledby="{{ t.id }}" onClick="{{ t.toggle }}" class="track hit" style="position: relative; width: 52px; height: 32px; flex: none; border: 0; border-radius: 16px; padding: 0; cursor: pointer; background: {{ t.bg }}">
+<span class="knob" style="position: absolute; left: 2px; top: 2px; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(23,20,31,0.22); transform: translateX({{ t.x }})"></span>
+</button>
+</div>
+</sc-for>
+</div>
+
+<h2 style="margin: 16px 0 0; padding: 0 16px; font-size: 13px; font-weight: 700; color: #5E5870">Dados</h2>
+<div class="group rise" style="animation-delay: 200ms; background: #FFFFFF; border-radius: 22px; overflow: hidden">
+<button type="button" class="row" style="width: 100%; min-height: 52px; border: 0; background: transparent; padding: 0 14px 0 16px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A3FD9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"></path></svg><span style="flex: 1; font-size: 16px; font-weight: 600">Importar planilha (.xlsx)</span></button>
+<button type="button" class="row" style="width: 100%; min-height: 52px; border: 0; background: transparent; padding: 0 14px 0 16px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A3FD9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg><span style="flex: 1; font-size: 16px; font-weight: 600">Exportar planilha</span><span style="font-size: 14px; font-weight: 600; color: #5E5870">.xlsx · .csv</span></button>
+</div>
+<p style="margin: 0; padding: 0 16px; font-size: 12px; line-height: 1.4; font-weight: 550; color: #5E5870">Os dados ficam só neste iPhone. Exporte de vez em quando como backup.</p>
+</main>
+
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 130px; background: linear-gradient(to top, rgba(244,242,249,0.96) 35%, rgba(244,242,249,0)); pointer-events: none"></div>
+
+<nav aria-label="Navegação principal" style="position: absolute; left: 16px; right: 16px; bottom: max(22px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px">
+<div class="glass" style="flex: 1; height: 64px; border-radius: 32px; padding: 6px; display: flex; align-items: center; gap: 2px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 30px rgba(52,30,110,0.14), 0 1px 2px rgba(52,30,110,0.08)">
+<a href="Main.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"></path></svg>Hoje</a>
+<a href="Evolucao.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5h16"></path><path d="m5 15 4.5-4.5 3.5 3 6-6.5"></path><path d="M15 7h4v4"></path></svg>Evolução</a>
+<a href="Semana.dc.html" class="press" style="flex: 1; height: 52px; border-radius: 26px; color: #4F4A5C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3.5"></rect><path d="M8 3v4M16 3v4M4 10h16"></path><path d="m9.5 14.8 1.8 1.8 3.4-3.6"></path></svg>Semana</a>
+<a href="Ajustes.dc.html" aria-current="page" class="press" style="flex: 1; height: 52px; border-radius: 26px; background: #17141F; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; font-weight: 650"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"></path><circle cx="15.5" cy="7" r="2.3"></circle><circle cx="9.5" cy="17" r="2.3"></circle></svg>Ajustes</a>
+</div>
+<a href="AddAlimento.dc.html" class="press" aria-label="Adicionar alimento" style="width: 64px; height: 64px; flex: none; border-radius: 32px; background: #7C4DEB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 10px 24px rgba(124,77,235,0.38)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1860}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      on: {
+        cafe: true, lancheManha: false, almoco: true, pre: true, pos: false, jantar: true, ceia: true,
+        manualFallback: true,
+        pesagem: true, checkin: true, resumo: true
+      }
+    };
+  }
+  renderVals() {
+    const on = this.state.on;
+    const sw = (key, label, sub) => ({
+      id: 'lbl-' + key,
+      label,
+      sub,
+      on: !!on[key],
+      bg: on[key] ? '#7C4DEB' : '#DCD6E6',
+      x: on[key] ? '20px' : '0px',
+      toggle: () => this.setState({ on: Object.assign({}, this.state.on, { [key]: !this.state.on[key] }) })
+    });
+    const refeicoes = [
+      sw('cafe', 'Café da manhã', '07:00'),
+      sw('lancheManha', 'Lanche da manhã', '10:00'),
+      sw('almoco', 'Almoço', '12:30'),
+      sw('pre', 'Lanche pré-treino', '16:30'),
+      sw('pos', 'Pós-treino', '18:30'),
+      sw('jantar', 'Jantar', '19:00'),
+      sw('ceia', 'Ceia', '22:00')
+    ];
+    const ativas = refeicoes.filter((r) => r.on).length;
+    return {
+      refeicoes,
+      refeicoesNote: ativas + ' refeições aparecem no Hoje, nesse horário. Em qualquer dia dá para incluir uma refeição extra.',
+      gasto: [sw('manualFallback', 'Pedir valor manual', 'se o Garmin não sincronizar até 21:30')],
+      lembretes: [
+        sw('pesagem', 'Pesagem diária', 'todo dia às 07:00, em jejum'),
+        sw('checkin', 'Check-in semanal', 'quartas, junto com a pesagem'),
+        sw('resumo', 'Resumo do fim do dia', '22:30 · calorias, macros e progresso')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

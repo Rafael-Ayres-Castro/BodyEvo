@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Novo alimento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app input{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app input::placeholder{color:#8A8496}
+.app input:focus-visible{outline:none}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.field{transition:box-shadow 160ms ease,background-color 160ms ease}
+.field:focus-within{box-shadow:0 0 0 2px #7C4DEB;background:#FFFFFF !important}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1),color 180ms ease}
+.press:active{transform:scale(0.97)}
+.seg-ind{transition:transform 300ms cubic-bezier(0.32,0.72,0,1)}
+.nrow+.nrow{border-top:1px solid #F0EDF5}
+@media (prefers-reduced-motion:reduce){.seg-ind{transition:none}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.app input::placeholder{color:#6F6982}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 1000px; position: relative; overflow: hidden; background: #F4F2F9">
+
+<main style="position: relative; padding: 58px 20px 40px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px">
+<a href="Alimentos.dc.html" class="press" style="justify-self: start; height: 44px; padding: 0 4px; display: flex; align-items: center; color: #4A3F66; font-size: 16px; font-weight: 650; text-decoration: none">Cancelar</a>
+<h1 style="margin: 0; font-size: 17px; font-weight: 750">Novo alimento</h1>
+<a href="Alimentos.dc.html" class="press" style="justify-self: end; height: 44px; padding: 0 4px; display: flex; align-items: center; color: #5B34C7; font-size: 16px; font-weight: 750; text-decoration: none">Salvar</a>
+</div>
+
+<div class="field" style="background: #FFFFFF; border-radius: 20px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px">
+<label for="nome" style="font-size: 12px; font-weight: 650; color: #5E5870">Nome</label>
+<input id="nome" type="text" enterkeyhint="next" autocomplete="off" autocapitalize="sentences" value="{{ name }}" onChange="{{ onName }}" placeholder="Ex.: Whey protein baunilha" style="border: 0; background: transparent; padding: 0; font-size: 18px; font-weight: 700; color: #17141F">
+</div>
+
+<section style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 700; color: #5E5870">Valores do rótulo</h2>
+<div role="group" aria-label="Base dos valores" style="position: relative; display: flex; height: 40px; padding: 3px; border-radius: 14px; background: #F1EEF6">
+<span class="seg-ind" aria-hidden="true" style="position: absolute; left: 3px; top: 3px; width: calc((100% - 6px) / 2); height: 34px; border-radius: 11px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(23,20,31,0.08), 0 3px 8px rgba(23,20,31,0.06); transform: translateX({{ segX }})"></span>
+<sc-for list="{{ bases }}" as="b" hint-placeholder-count="2">
+<button type="button" class="press" aria-pressed="{{ b.on }}" onClick="{{ b.pick }}" style="position: relative; flex: 1; border: 0; background: transparent; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; color: {{ b.fg }}">{{ b.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ porPorcao }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<label for="porcao" style="font-size: 15px; font-weight: 650">Tamanho da porção</label>
+<div class="field" style="display: flex; align-items: center; gap: 4px; width: 104px; height: 44px; padding: 0 12px; border-radius: 12px; background: #F6F4FA">
+<input id="porcao" class="num" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off" value="{{ porcao }}" onChange="{{ onPorcao }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 17px; font-weight: 750; color: #17141F">
+<span style="font-size: 13px; font-weight: 650; color: #5E5870">g</span>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="nutri-h" style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px 2px; display: flex; flex-direction: column">
+<h2 id="nutri-h" class="num" style="margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #5E5870">Nutrientes {{ baseLabel }}</h2>
+<sc-for list="{{ fields }}" as="n" hint-placeholder-count="4">
+<div class="nrow" style="display: flex; align-items: center; gap: 12px; padding: 8px 0">
+<span aria-hidden="true" style="width: 10px; height: 10px; flex: none; border-radius: 5px; background: {{ n.dot }}"></span>
+<label for="{{ n.id }}" style="flex: 1; font-size: 15px; font-weight: 650">{{ n.label }}</label>
+<div class="field" style="display: flex; align-items: center; gap: 4px; width: 120px; height: 44px; padding: 0 12px; border-radius: 12px; background: #F6F4FA">
+<input id="{{ n.id }}" class="num" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off" value="{{ n.val }}" onChange="{{ n.onChange }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 17px; font-weight: 750; color: #17141F">
+<span style="width: 28px; font-size: 13px; font-weight: 650; color: #5E5870">{{ n.unit }}</span>
+</div>
+</div>
+</sc-for>
+</section>
+
+<section aria-live="polite" style="border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; background: {{ chk.bg }}">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 24px; height: 24px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: {{ chk.fg }}; color: #FFFFFF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ chk.icon }}"></path></svg></span>
+<span style="font-size: 14px; font-weight: 750; color: {{ chk.fg }}">{{ chk.title }}</span>
+</div>
+<p class="num" style="margin: 0; font-size: 13px; line-height: 1.45; font-weight: 600; color: #3B3548">{{ chk.text }}</p>
+<sc-if value="{{ porPorcao }}" hint-placeholder-val="{{ true }}">
+<p class="num" style="margin: 0; font-size: 13px; line-height: 1.45; font-weight: 600; color: #3B3548">Por 100 g: {{ per100 }}</p>
+</sc-if>
+</section>
+
+<section style="background: #FFFFFF; border-radius: 20px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<label for="unidade" style="font-size: 15px; font-weight: 650">1 unidade pesa</label>
+<span style="font-size: 12px; font-weight: 550; color: #5E5870">Opcional · 1 scoop, 1 ovo, 1 fatia</span>
+</div>
+<div class="field" style="display: flex; align-items: center; gap: 4px; width: 104px; height: 44px; padding: 0 12px; border-radius: 12px; background: #F6F4FA">
+<input id="unidade" class="num" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="–" value="{{ unidade }}" onChange="{{ onUnidade }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 17px; font-weight: 750; color: #17141F">
+<span style="font-size: 13px; font-weight: 650; color: #5E5870">g</span>
+</div>
+</div>
+</section>
+
+<a href="Alimentos.dc.html" class="press" style="margin-top: 4px; height: 56px; border-radius: 28px; background: #17141F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; font-weight: 700">Salvar alimento</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { name: 'Whey protein baunilha', base: 1, porcao: '30', kcal: '120', p: '24', c: '2,4', g: '1,8', unidade: '30' };
+  }
+  renderVals() {
+    const s = this.state;
+    const num = (t) => { const n = parseFloat(String(t).replace(',', '.')); return isNaN(n) ? 0 : n; };
+    const f1 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+    const clean = (t) => String(t).replace(/[^0-9,.]/g, '').slice(0, 6);
+    const set = (k) => (e) => this.setState({ [k]: clean(e.target.value) });
+    const kcal = num(s.kcal), p = num(s.p), c = num(s.c), g = num(s.g);
+    const calc = p * 4 + c * 4 + g * 9;
+    const diff = kcal > 0 ? Math.abs(calc - kcal) / kcal : 1;
+    const ok = kcal > 0 && diff <= 0.08;
+    const chk = ok
+      ? { title: 'Bate com o rótulo', bg: '#E2F4E9', fg: '#17673D', icon: 'M5 12.5 9.5 17 19 7.5' }
+      : { title: 'Confira o rótulo', bg: '#FFF1DC', fg: '#8A4B00', icon: 'M12 7v6M12 17h.01' };
+    chk.text = '4 × ' + f1(p) + ' + 4 × ' + f1(c) + ' + 9 × ' + f1(g) + ' = ' + f1(calc) + ' kcal pelos macros, contra ' + f1(kcal) + ' kcal no rótulo' + (ok ? '.' : ' (diferença de ' + Math.round(diff * 100) + '%).');
+    const porc = num(s.porcao) || 100;
+    const k = s.base === 1 ? 100 / porc : 1;
+    const baseLabel = s.base === 1 ? 'por porção de ' + f1(porc) + ' g' : 'por 100 g';
+    const defs = [
+      ['kcal', 'Calorias', 'kcal', '#EB7A2F'],
+      ['p', 'Proteínas', 'g', '#7C4DEB'],
+      ['c', 'Carboidratos', 'g', '#3D8BEB'],
+      ['g', 'Gorduras', 'g', '#E2A331']
+    ];
+    return {
+      name: s.name,
+      onName: (e) => this.setState({ name: String(e.target.value).slice(0, 48) }),
+      segX: (s.base * 100) + '%',
+      bases: ['Por 100 g', 'Por porção'].map((label, i) => ({
+        label,
+        on: i === s.base,
+        fg: i === s.base ? '#17141F' : '#5E5870',
+        pick: () => this.setState({ base: i })
+      })),
+      porPorcao: s.base === 1,
+      porcao: s.porcao,
+      onPorcao: set('porcao'),
+      baseLabel,
+      fields: defs.map(([key, label, unit, dot]) => ({
+        id: 'n-' + key,
+        label,
+        unit,
+        dot,
+        val: s[key],
+        onChange: set(key)
+      })),
+      chk,
+      per100: f1(kcal * k) + ' kcal · P ' + f1(p * k) + ' · C ' + f1(c * k) + ' · G ' + f1(g * k),
+      unidade: s.unidade,
+      onUnidade: set('unidade')
+    };
+  }
+}
+</script>
+</body>
+</html>

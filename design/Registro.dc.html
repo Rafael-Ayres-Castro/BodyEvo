@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Peso e gasto do dia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app input,.app textarea{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app input::placeholder,.app textarea::placeholder{color:#8A8496}
+.app input:focus-visible,.app textarea:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1),background-color 160ms ease,color 160ms ease}
+.press:active{transform:scale(0.97)}
+.track{transition:background-color 200ms ease}
+.knob{transition:transform 260ms cubic-bezier(0.32,0.72,0,1)}
+.spin{transition:transform 600ms cubic-bezier(0.23,1,0.32,1)}
+.sheet{animation:sheet 520ms cubic-bezier(0.32,0.72,0,1) backwards}
+@keyframes sheet{from{transform:translateY(100%)}}
+.pushback{transform-origin:50% 0;animation:push 520ms cubic-bezier(0.32,0.72,0,1) backwards}
+@keyframes push{from{transform:none}}
+.scrim{animation:fade 420ms ease-out backwards}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.sheet,.pushback{animation-name:fade}.knob,.spin{transition:none}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.app input::placeholder,.app textarea::placeholder{color:#6F6982}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+/* Sheet: curva de drawer do iOS, dentro de 500 ms */
+.sheet,.pushback{animation-duration:440ms;animation-timing-function:var(--ease-drawer)}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0D0A14">
+
+<div class="pushback" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; transform: translateY(12px) scale(0.92); border-radius: 44px; overflow: hidden; background: #F4F2F9">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 320px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+<div style="position: relative; padding: 62px 24px 0; display: flex; flex-direction: column; gap: 4px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Quarta, 9 de dezembro</p>
+<p style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Semana 7 do bulking</p>
+</div>
+<div style="position: relative; margin: 18px 20px 0; height: 70px; border-radius: 20px; background: rgba(255,255,255,0.6)"></div>
+<div style="position: relative; margin: 12px 20px 0; height: 420px; border-radius: 28px; background: #FFFFFF"></div>
+</div>
+<div class="scrim" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: rgba(13,10,20,0.32)"></div>
+
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="reg-h" style="position: absolute; left: 0; right: 0; top: 56px; bottom: 0; background: #F4F2F9; border-radius: 34px 34px 0 0; padding: 8px 20px max(30px, calc(env(safe-area-inset-bottom) + 12px)); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 -12px 40px rgba(0,0,0,0.18)">
+<div aria-hidden="true" style="width: 36px; height: 5px; border-radius: 3px; background: #CFC9DA; align-self: center"></div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0 4px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 id="reg-h" style="margin: 0; font-size: 22px; line-height: 1.15; font-weight: 750; letter-spacing: -0.022em">Peso e gasto de hoje</h1>
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #5E5870">Quarta, 9 dez · dia 43</p>
+</div>
+<a href="Main.dc.html" class="press" aria-label="Fechar" style="width: 44px; height: 44px; border-radius: 22px; background: #E9E5F1; color: #3B3548; display: flex; align-items: center; justify-content: center; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<label for="peso" style="font-size: 15px; font-weight: 700">Peso</label>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">em jejum, depois do banheiro</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<button type="button" class="press" aria-label="Diminuir 0,1 kg" onClick="{{ dec }}" style="width: 52px; height: 52px; flex: none; border: 0; border-radius: 26px; background: #F1EEF6; color: #17141F; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<div style="display: flex; align-items: baseline; justify-content: center; gap: 4px; min-width: 0">
+<input id="peso" class="num" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off" value="{{ wText }}" onChange="{{ onW }}" onFocus="{{ selectAll }}" style="width: 136px; border: 0; background: transparent; padding: 0; text-align: right; font-size: 48px; line-height: 1.1; font-weight: 750; letter-spacing: -0.04em; color: #17141F">
+<span style="font-size: 20px; font-weight: 650; color: #5E5870">kg</span>
+</div>
+<button type="button" class="press" aria-label="Aumentar 0,1 kg" onClick="{{ inc }}" style="width: 52px; height: 52px; flex: none; border: 0; border-radius: 26px; background: #F1EEF6; color: #17141F; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+</div>
+<p class="num" aria-live="polite" style="margin: 0; text-align: center; font-size: 13px; font-weight: 600; color: #5E5870">{{ wDelta }} vs ontem · média 7 dias {{ avg7 }}</p>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A63C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"></path></svg>Calorias gastas</span>
+<span class="num" style="display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 13px; font-size: 12px; font-weight: 700; background: {{ src.bg }}; color: {{ src.fg }}"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 4px; background: {{ src.dot }}"></span>{{ src.text }}</span>
+</div>
+
+<sc-if value="{{ isGarmin }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="num" style="font-size: 30px; line-height: 1.05; font-weight: 750; letter-spacing: -0.03em">{{ garminText }} <span style="font-size: 14px; font-weight: 650; color: #5E5870">kcal</span></span>
+<span class="num" style="font-size: 12px; font-weight: 600; color: #5E5870">ativas 820 + repouso 1.710 · até 19:00</span>
+</div>
+<button type="button" class="press hit" onClick="{{ sync }}" style="height: 40px; padding: 0 14px 0 12px; border: 0; border-radius: 20px; background: #E4EEFC; color: #1F4F94; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; cursor: pointer"><svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{ spin }}deg)"><path d="M20 12a8 8 0 1 1-2.3-5.6"></path><path d="M20 4v4h-4"></path></svg>Atualizar</button>
+</div>
+</sc-if>
+<sc-if value="{{ isManual }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 6px; height: 52px; padding: 0 14px; border-radius: 14px; background: #F6F4FA">
+<label for="kout" style="font-size: 13px; font-weight: 650; color: #5E5870; white-space: nowrap">Total do dia</label>
+<input id="kout" class="num" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" value="{{ koutText }}" onChange="{{ onKout }}" onFocus="{{ selectAll }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 22px; font-weight: 750; color: #17141F">
+<span style="font-size: 13px; font-weight: 600; color: #5E5870">kcal</span>
+</div>
+</sc-if>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span id="lbl-manual" style="font-size: 14px; font-weight: 650; color: #3B3548">Inserir manualmente</span>
+<button type="button" role="switch" aria-checked="{{ manual }}" aria-labelledby="lbl-manual" onClick="{{ toggleManual }}" class="track hit" style="position: relative; width: 52px; height: 32px; flex: none; border: 0; border-radius: 16px; padding: 0; cursor: pointer; background: {{ trackBg }}">
+<span class="knob" style="position: absolute; left: 2px; top: 2px; width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 6px rgba(23,20,31,0.22); transform: translateX({{ knobX }})"></span>
+</button>
+</div>
+
+<div aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; border-top: 1px solid #F0EDF5">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">Ingeridas, das refeições</span>
+<span class="num" style="font-size: 17px; font-weight: 750">2.435 kcal</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">Saldo até agora</span>
+<span class="num" style="font-size: 17px; font-weight: 750">{{ saldoText }} kcal</span>
+</div>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-size: 15px; font-weight: 700">Observação</span>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">opcional</span>
+</div>
+<div role="group" aria-label="Marcadores do dia" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{ tags }}" as="t" hint-placeholder-count="5">
+<button type="button" class="press" aria-pressed="{{ t.pressed }}" onClick="{{ t.toggle }}" style="height: 36px; padding: 0 14px; border: 0; border-radius: 18px; font-size: 14px; font-weight: 650; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }}">{{ t.label }}</button>
+</sc-for>
+</div>
+</div>
+
+<a href="Main.dc.html" class="press" style="margin-top: auto; height: 56px; border-radius: 28px; background: #17141F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 16px; font-weight: 700">Salvar</a>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      w: 75.5,
+      wText: '75,5',
+      manual: false,
+      kout: 2530,
+      spin: 0,
+      tags: { longao: false, perna: true, fora: false, sono: false, sal: false }
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const fmt1 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const fmt2 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtInt = (n) => Math.round(n).toLocaleString('pt-BR');
+    const signed = (n, f) => (n > 0.0001 ? '+' : n < -0.0001 ? '−' : '±') + f(Math.abs(n));
+    const ontem = 75.4;
+    const ultimos = [75.4, 75.2, 75.6, 75.3, 75.4];
+    const avg7 = (ultimos.reduce((a, b) => a + b, 0) + s.w) / (ultimos.length + 1);
+    const step = (d) => () => {
+      const n = Math.round((this.state.w + d) * 10) / 10;
+      this.setState({ w: n, wText: fmt1(n) });
+    };
+    const GARMIN = 2530;
+    const gastas = s.manual ? s.kout : GARMIN;
+    const defs = [
+      ['longao', 'Longão'],
+      ['perna', 'Treino de perna'],
+      ['fora', 'Comi fora'],
+      ['sono', 'Dormi mal'],
+      ['sal', 'Muito sal']
+    ];
+    return {
+      selectAll: (e) => {
+        const t = e.target;
+        setTimeout(() => { try { t.setSelectionRange(0, String(t.value).length); } catch (err) {} }, 0);
+      },
+      wText: s.wText,
+      onW: (e) => {
+        const t = String(e.target.value).replace(/[^0-9,.]/g, '').slice(0, 5);
+        const n = parseFloat(t.replace(',', '.'));
+        this.setState({ wText: t, w: isNaN(n) ? this.state.w : n });
+      },
+      dec: step(-0.1),
+      inc: step(0.1),
+      wDelta: signed(s.w - ontem, fmt1) + ' kg',
+      avg7: fmt2(avg7),
+      isGarmin: !s.manual,
+      isManual: s.manual,
+      manual: s.manual,
+      src: s.manual
+        ? { text: 'Manual', bg: '#F1EEF6', fg: '#4A3F66', dot: '#8A8496' }
+        : { text: 'Garmin · 19:00', bg: '#E2F4E9', fg: '#17673D', dot: '#22A05A' },
+      garminText: fmtInt(GARMIN),
+      spin: s.spin,
+      sync: () => this.setState({ spin: this.state.spin + 360 }),
+      toggleManual: () => this.setState({ manual: !this.state.manual }),
+      trackBg: s.manual ? '#7C4DEB' : '#DCD6E6',
+      knobX: s.manual ? '20px' : '0px',
+      koutText: s.kout ? fmtInt(s.kout) : '',
+      onKout: (e) => {
+        const n = parseInt(String(e.target.value).replace(/\D/g, '').slice(0, 5), 10);
+        this.setState({ kout: isNaN(n) ? 0 : n });
+      },
+      saldoText: signed(2435 - gastas, fmtInt),
+      tags: defs.map(([key, label]) => {
+        const on = !!s.tags[key];
+        return {
+          label,
+          pressed: on,
+          bg: on ? '#17141F' : '#F1EEF6',
+          fg: on ? '#FFFFFF' : '#3B3548',
+          toggle: () => this.setState({ tags: Object.assign({}, this.state.tags, { [key]: !this.state.tags[key] }) })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

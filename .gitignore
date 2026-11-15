@@ -1,0 +1,19 @@
+# Segredos
+.env
+api/.env
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Dados pessoais e arquivos grandes do kit de design
+referencia/
+rumo-kit/
+
+# Local
+.claude/settings.local.json
+.DS_Store
+node_modules/

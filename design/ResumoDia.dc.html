@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Resumo do dia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1)}
+.press:active{transform:scale(0.97)}
+.pop{animation:pop 460ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(0.96)}}
+.scrim{animation:fade 360ms ease-out backwards}
+@keyframes fade{from{opacity:0}}
+.draw{animation:draw 520ms cubic-bezier(0.23,1,0.32,1) 320ms backwards}
+@keyframes draw{from{stroke-dashoffset:1}}
+.ring{animation:ring 1000ms cubic-bezier(0.23,1,0.32,1) 260ms backwards}
+@keyframes ring{from{stroke-dashoffset:100}}
+.grow-x{transform-origin:left center;animation:growx 900ms cubic-bezier(0.23,1,0.32,1) 420ms backwards}
+@keyframes growx{from{transform:scaleX(0)}}
+.rise{animation:rise 420ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.mrow+.mrow{border-top:1px solid #F0EDF5}
+@media (prefers-reduced-motion:reduce){.pop,.rise{animation-name:fade}.draw,.ring,.grow-x{animation:none}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+/* Uma vez por dia: aqui a celebração cabe, mas mais curta */
+.pop{animation-duration:400ms}
+.ring{animation-duration:800ms}
+.slide-x{animation:slidex 800ms var(--ease-out) 420ms backwards}
+@keyframes slidex{from{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.slide-x{animation:none}}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F4F2F9">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 320px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+<div aria-hidden="true" style="position: absolute; left: 24px; top: 62px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; font-weight: 600; color: #5E5870">Quarta, 9 de dezembro</span>
+<span style="font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Semana 7 do bulking</span>
+</div>
+<div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 150px; height: 70px; border-radius: 20px; background: rgba(255,255,255,0.6)"></div>
+<div aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 232px; height: 440px; border-radius: 28px; background: #FFFFFF"></div>
+<div class="scrim" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: rgba(13,10,20,0.5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px)"></div>
+
+<section class="pop" role="dialog" aria-modal="true" aria-labelledby="dia-h" style="position: absolute; left: 12px; right: 12px; top: 60px; bottom: 24px; background: #FFFFFF; border-radius: 36px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 30px 80px rgba(13,10,20,0.35)">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span class="num" style="font-size: 13px; font-weight: 650; color: #5E5870">Quarta, 9 de dezembro · 22:30</span>
+<a href="Main.dc.html" class="press" aria-label="Fechar resumo" style="width: 44px; height: 44px; border-radius: 22px; background: #F1EEF6; color: #3B3548; display: flex; align-items: center; justify-content: center; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+</div>
+
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 52px; height: 52px; flex: none; border-radius: 26px; display: flex; align-items: center; justify-content: center; background: {{ v.badgeBg }}; color: {{ v.badgeFg }}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="draw" d="{{ v.icon }}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="0"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; font-weight: 650; color: #5E5870">Resumo do dia</span>
+<h1 id="dia-h" style="margin: 0; font-size: 24px; line-height: 1.15; font-weight: 750; letter-spacing: -0.025em">{{ v.title }}</h1>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px; border-radius: 16px; background: #F7F5FB">
+<div role="img" aria-label="{{ v.ringLabel }}" style="position: relative; width: 112px; height: 112px; flex: none">
+<svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true">
+<circle cx="56" cy="56" r="47" fill="none" stroke="#F1E3D7" stroke-width="11"></circle>
+<circle class="ring" cx="56" cy="56" r="47" fill="none" stroke="{{ v.ringColor }}" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="{{ v.ringOffset }}" transform="rotate(-90 56 56)"></circle>
+</svg>
+<span style="position: absolute; left: 0; top: 0; width: 112px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span class="num" style="font-size: 22px; font-weight: 750; letter-spacing: -0.02em">{{ v.kcal }}</span>
+<span class="num" style="font-size: 11px; font-weight: 650; color: #5E5870">de 3.075 kcal</span>
+</span>
+</div>
+<dl style="margin: 0; flex: 1; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 1px">
+<dt style="display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; color: #5E5870"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 4px; background: #22A05A"></span>Gastas · Garmin, dia inteiro</dt>
+<dd class="num" style="margin: 0; font-size: 18px; font-weight: 750">2.790 kcal</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<dt style="font-size: 12px; font-weight: 650; color: #5E5870">Saldo</dt>
+<dd class="num" style="margin: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><span style="font-size: 18px; font-weight: 750">{{ v.saldo }}</span><span style="height: 22px; padding: 0 8px; border-radius: 11px; display: flex; align-items: center; font-size: 11px; font-weight: 750; background: {{ v.saldoBg }}; color: {{ v.saldoFg }}">{{ v.saldoTag }}</span></dd>
+</div>
+</dl>
+</div>
+
+<ul aria-label="Macros do dia" style="list-style: none; margin: 0; padding: 0 4px; display: flex; flex-direction: column">
+<sc-for list="{{ v.macros }}" as="m" hint-placeholder-count="3">
+<li class="mrow rise" style="display: flex; align-items: center; gap: 10px; padding: 9px 0; animation-delay: {{ m.delay }}ms">
+<span aria-hidden="true" style="width: 10px; height: 10px; flex: none; border-radius: 5px; background: {{ m.dot }}"></span>
+<span style="flex: 1; font-size: 15px; font-weight: 700">{{ m.name }}</span>
+<span class="num" style="font-size: 15px; font-weight: 750">{{ m.val }}</span>
+<span class="num" style="width: 84px; text-align: right; font-size: 12px; font-weight: 650; color: #5E5870">{{ m.rule }}</span>
+<span role="img" aria-label="{{ m.okLabel }}" style="width: 24px; height: 24px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: {{ m.okBg }}; color: {{ m.okFg }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ m.okIcon }}"></path></svg></span>
+</li>
+</sc-for>
+</ul>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-size: 14px; font-weight: 750">Rumo aos 80 kg</span>
+<span class="num" style="font-size: 12px; font-weight: 650; color: #5E5870">75,40 kg · +1,40 kg em 6 semanas</span>
+</div>
+<div role="img" aria-label="23% do caminho de 74 a 80 kg" style="position: relative; height: 10px; border-radius: 5px; background: #EFEBF6">
+<div style="position: absolute; left: 0; top: 0; right: 0; height: 10px; border-radius: 5px; overflow: hidden"><div class="slide-x" style="width: 100%; height: 10px; border-radius: 5px; background: #7C4DEB; transform: translateX(-76.7%)"></div></div>
+</div>
+<div class="num" style="display: flex; gap: 6px; flex-wrap: wrap; padding-top: 2px">
+<span style="height: 26px; padding: 0 10px; border-radius: 13px; display: flex; align-items: center; background: #EEE7FD; color: #4A2CA8; font-size: 12px; font-weight: 700">14 dias seguidos registrando</span>
+<span style="height: 26px; padding: 0 10px; border-radius: 13px; display: flex; align-items: center; background: #EEE7FD; color: #4A2CA8; font-size: 12px; font-weight: 700">{{ v.streak2 }}</span>
+</div>
+</div>
+
+<p style="margin: 0; padding: 14px 16px; border-radius: 20px; background: {{ v.msgBg }}; color: {{ v.msgFg }}; font-size: 14px; line-height: 1.5; font-weight: 600; text-wrap: pretty">{{ v.msg }}</p>
+
+<div style="margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<a href="Main.dc.html" class="press" style="height: 52px; border-radius: 26px; background: #F1EEF6; color: #17141F; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none">Revisar o dia</a>
+<a href="Main.dc.html" class="press" style="height: 52px; border-radius: 26px; background: #17141F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none">Fechar o dia</a>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variante":{"editor":"enum","options":["Na meta","Abaixo da meta","Acima da meta"],"default":"Na meta"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ICON = {
+      check: 'M5 12.5 9.5 17 19 7.5',
+      down: 'M12 5v14M6 13l6 6 6-6',
+      up: 'M12 19V5M6 11l6-6 6 6',
+      x: 'M7 7l10 10M17 7 7 17',
+      bang: 'M12 6v8M12 18h.01'
+    };
+    const ok = (yes, label) => yes
+      ? { okBg: '#E2F4E9', okFg: '#17673D', okIcon: ICON.check, okLabel: label + ': dentro da meta' }
+      : { okBg: '#FFF1DC', okFg: '#8A4B00', okIcon: ICON.bang, okLabel: label + ': fora da meta' };
+    const mk = (name, dot, val, rule, yes, i) => Object.assign({ name, dot, val, rule, delay: 380 + i * 50 }, ok(yes, name));
+    const V = {
+      'Na meta': {
+        title: 'Dia na meta',
+        icon: ICON.check, badgeBg: '#E2F4E9', badgeFg: '#17673D',
+        kcal: '3.069', ringOffset: 0.2, ringColor: '#EB7A2F', ringLabel: '3.069 de 3.075 kcal, 100% da meta',
+        saldo: '+279', saldoTag: 'na faixa', saldoBg: '#E2F4E9', saldoFg: '#17673D',
+        macros: [
+          mk('Proteína', '#7C4DEB', '199 g', 'mín. 166', true, 0),
+          mk('Carboidrato', '#3D8BEB', '403 g', '360–440', true, 1),
+          mk('Gordura', '#E2A331', '80 g', 'máx. 100', true, 2)
+        ],
+        streak2: 'Proteína batida há 9 dias',
+        msg: 'Calorias e os três macros dentro do plano. É a proteína acima do mínimo, dia após dia, que faz o superávit virar músculo. Amanhã: pesagem às 07:00, em jejum.',
+        msgBg: '#EEE7FD', msgFg: '#2E2060'
+      },
+      'Abaixo da meta': {
+        title: 'Faltaram 595 kcal',
+        icon: ICON.down, badgeBg: '#FFF1DC', badgeFg: '#8A4B00',
+        kcal: '2.480', ringOffset: 19.3, ringColor: '#EB7A2F', ringLabel: '2.480 de 3.075 kcal, 81% da meta',
+        saldo: '−310', saldoTag: 'déficit', saldoBg: '#FFF1DC', saldoFg: '#8A4B00',
+        macros: [
+          mk('Proteína', '#7C4DEB', '172 g', 'mín. 166', true, 0),
+          mk('Carboidrato', '#3D8BEB', '290 g', '360–440', false, 1),
+          mk('Gordura', '#E2A331', '66 g', 'máx. 100', true, 2)
+        ],
+        streak2: 'Proteína batida há 9 dias',
+        msg: 'Quase tudo que faltou foi carboidrato. Um dia assim não muda nada: o que conta é a média da semana. Para amanhã, deixe a ceia separada, que fica mais fácil fechar.',
+        msgBg: '#FFF6E8', msgFg: '#5A3600'
+      },
+      'Acima da meta': {
+        title: '545 kcal acima da meta',
+        icon: ICON.up, badgeBg: '#FFF1DC', badgeFg: '#8A4B00',
+        kcal: '3.620', ringOffset: 0, ringColor: '#D1631C', ringLabel: '3.620 de 3.075 kcal, 118% da meta',
+        saldo: '+830', saldoTag: 'acima da faixa', saldoBg: '#FFF1DC', saldoFg: '#8A4B00',
+        macros: [
+          mk('Proteína', '#7C4DEB', '205 g', 'mín. 166', true, 0),
+          mk('Carboidrato', '#3D8BEB', '455 g', '360–440', false, 1),
+          mk('Gordura', '#E2A331', '112 g', 'máx. 100', false, 2)
+        ],
+        streak2: 'Proteína batida há 9 dias',
+        msg: 'A maior parte do extra veio de gordura. Sem culpa e sem compensar cortando amanhã: é só voltar ao plano normal. Um dia fora não aparece na média da semana.',
+        msgBg: '#FFF6E8', msgFg: '#5A3600'
+      }
+    };
+    const key = this.props.variante ?? 'Na meta';
+    return { v: V[key] || V['Na meta'] };
+  }
+}
+</script>
+</body>
+</html>

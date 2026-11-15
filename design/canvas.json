@@ -1,0 +1,72 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 390, "h": 1700, "title": "1 · Hoje", "is_interactive": true, "radius": 52 },
+    "Registro.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "2 · Peso e gasto do dia", "is_interactive": true, "radius": 52 },
+    "Medidas.dc.html": { "x": 940, "y": 0, "w": 390, "h": 1320, "title": "3 · Check-in semanal", "is_interactive": true, "radius": 52 },
+    "Semana.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 1300, "title": "4 · Resumo da semana", "is_interactive": true, "radius": 52 },
+    "Evolucao.dc.html": { "x": 1880, "y": 0, "w": 390, "h": 1660, "title": "5 · Evolução", "is_interactive": true, "radius": 52 },
+    "Ajustes.dc.html": { "x": 2350, "y": 0, "w": 390, "h": 1860, "title": "6 · Ajustes", "is_interactive": true, "radius": 52 },
+    "AddAlimento.dc.html": { "x": 0, "y": 2240, "w": 390, "h": 844, "title": "7 · Adicionar alimento", "is_interactive": true, "radius": 52 },
+    "Refeicao.dc.html": { "x": 470, "y": 2240, "w": 390, "h": 880, "title": "8 · Refeição", "is_interactive": true, "radius": 52 },
+    "Alimentos.dc.html": { "x": 940, "y": 2240, "w": 390, "h": 1320, "title": "9 · Meus alimentos", "is_interactive": true, "radius": 52 },
+    "NovoAlimento.dc.html": { "x": 1410, "y": 2240, "w": 390, "h": 1000, "title": "10 · Novo alimento", "is_interactive": true, "radius": 52 },
+    "Metas.dc.html": { "x": 1880, "y": 2240, "w": 390, "h": 1180, "title": "11 · Metas de macros", "is_interactive": true, "radius": 52 },
+    "ResumoDia.dc.html": { "x": 2350, "y": 2240, "w": 390, "h": 844, "title": "12 · Resumo do dia (pop-up)", "is_interactive": true, "radius": 52 }
+  },
+  "createdOnFiles": { "at": "2026-11-04T15:40:00Z", "v": 1 },
+  "designSystems": [],
+  "launch": { "view": "canvas" },
+  "noteOrder": ["titulo", "dados", "movimento", "titulo2"],
+  "notes": {
+    "dados": {
+      "fill": "purple",
+      "size": 24,
+      "text": "Dados de exemplo: as telas simulam a semana 7 (quarta, 9/dez). Vêm da sua planilha: início em 28/10 com 74 kg, alvo 80 kg, ritmo 0,10–0,40 kg/sem (ideal 0,25), meta de 2.900 kcal, ajuste de ±175 kcal e limite da dobra abdominal de 1 mm/sem. Status, leitura das medidas e calorias sugeridas seguem as mesmas fórmulas da aba Semanal. Os valores dos alimentos são aproximados (tabela TACO), só para o exemplo: no app você cadastra os seus pelo rótulo.",
+      "w": 360,
+      "x": 2820,
+      "y": 0
+    },
+    "movimento": {
+      "fill": "blue",
+      "size": 24,
+      "text": "Movimento e toque — para implementar\n• Curvas: entrar/sair cubic-bezier(.23,1,.32,1); sheets cubic-bezier(.32,.72,0,1); deslizar na tela cubic-bezier(.77,0,.175,1).\n• Toque: tudo que é tocável encolhe para 0,97 ao encostar (160 ms), sem esperar soltar. Área de toque mínima de 44 pt.\n• Sheets: sobem em 440 ms e a tela de trás afunda para 0,92. Arrastar para baixo acompanha o dedo 1:1; fecha com um flick (> 0,11 px/ms) ou depois de 25% da altura; para cima, resistência (rubber-band); se soltar antes, volta com mola sem quique.\n• Dados: anéis e barras não animam ao abrir; animam só a mudança de valor (600 ms) quando você adiciona um alimento.\n• Telas frequentes (Hoje, Evolução, Semana, Ajustes) abrem sem animação de entrada. Celebração só no Resumo do dia.\n• Campos numéricos selecionam o valor ao tocar, para você só digitar o peso novo.\n• Reduzir movimento: só fades. Reduzir transparência ou aumentar contraste: barra de abas sólida.\n• PWA: viewport-fit=cover + env(safe-area-inset-*), 100dvh, theme-color por esquema, overscroll-behavior: none, campos ≥ 16 px, toggles com <input type=\"checkbox\" switch> do Safari (iOS 17.4+).",
+      "w": 360,
+      "x": 2820,
+      "y": 600
+    },
+    "titulo": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Rumo — acompanhamento de bulking (PWA para iPhone)",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "titulo2": {
+      "kind": "title1",
+      "maxW": 2200,
+      "text": "Alimentação: refeições, balança, macros e resumo do dia",
+      "w": 240,
+      "x": 0,
+      "y": 1960
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Registro.dc.html",
+    "Medidas.dc.html",
+    "Semana.dc.html",
+    "Evolucao.dc.html",
+    "Ajustes.dc.html",
+    "AddAlimento.dc.html",
+    "Refeicao.dc.html",
+    "Alimentos.dc.html",
+    "NovoAlimento.dc.html",
+    "Metas.dc.html",
+    "ResumoDia.dc.html"
+  ],
+  "pages": [],
+  "title": "Rumo · app de acompanhamento corporal"
+}

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Check-in semanal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app input{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app input::placeholder{color:#8A8496}
+.app input:focus-visible{outline:none}
+.field:focus-within{border-color:#7C4DEB !important;background:#FFFFFF !important}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1)}
+.press:active{transform:scale(0.97)}
+.field{transition:border-color 160ms ease,background-color 160ms ease}
+.seg{transition:background-color 220ms ease}
+.mrow+.mrow{border-top:1px solid #F0EDF5}
+.rise{animation:rise 460ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rise{animation-name:fade}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.app input::placeholder{color:#6F6982}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+/* Check-in é semanal: a entrada suave dos blocos fica, mais curta */
+.rise{animation-duration:360ms}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 1320px; position: relative; overflow: hidden; background: #F4F2F9">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 300px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+
+<main style="position: relative; padding: 58px 20px 40px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Main.dc.html" class="press" aria-label="Voltar para Hoje" style="width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.7); color: #17141F; display: flex; align-items: center; justify-content: center; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg></a>
+<span class="num" style="font-size: 13px; font-weight: 700; color: #4A3F66">{{ doneText }}</span>
+</div>
+
+<header style="display: flex; flex-direction: column; gap: 4px; padding: 4px 4px 0">
+<h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Check-in semanal</h1>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Semana 7 · quarta, 9 de dezembro</p>
+</header>
+
+<div role="progressbar" aria-label="Medidas preenchidas" aria-valuemin="0" aria-valuemax="8" aria-valuenow="{{ done }}" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 4px 4px 0">
+<sc-for list="{{ segs }}" as="sg" hint-placeholder-count="8">
+<span class="seg" style="height: 6px; border-radius: 3px; background: {{ sg.bg }}"></span>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 20px; background: #EEE7FD; color: #3D2A78">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<p style="margin: 0; font-size: 14px; line-height: 1.4; font-weight: 550">Em jejum, sempre do mesmo lado do corpo e com a fita firme, sem apertar.</p>
+</div>
+
+<h2 style="margin: 10px 4px 0; font-size: 15px; font-weight: 750; letter-spacing: -0.01em">Gordura abdominal</h2>
+<section class="rise" style="background: #FFFFFF; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(40,24,90,0.04), 0 12px 32px rgba(60,36,130,0.06)">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 12px; background: #EEE7FD; color: #6A3FD9; display: flex; align-items: center; justify-content: center"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 10a5.5 5.5 0 0 1-11 0c0-3.4 2.5-6.4 5.5-10z"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 16px; font-weight: 700">Dobra abdominal</span>
+<span style="font-size: 12px; font-weight: 550; color: #5E5870">Adipômetro · 2 cm ao lado do umbigo · 3 leituras</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ leituras }}" as="r" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="{{ r.id }}" style="font-size: 12px; font-weight: 650; color: #5E5870">{{ r.label }}</label>
+<div class="field" style="display: flex; align-items: center; gap: 4px; height: 48px; padding: 0 10px; border-radius: 14px; background: {{ r.boxBg }}; border: 1.5px {{ r.boxStyle }} {{ r.boxLine }}">
+<input id="{{ r.id }}" class="num" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="–" value="{{ r.val }}" onChange="{{ r.onChange }}" onFocus="{{ r.selectAll }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; font-size: 18px; font-weight: 750; color: #17141F; text-align: right">
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">mm</span>
+</div>
+</div>
+</sc-for>
+</div>
+<div aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; border-top: 1px solid #F0EDF5">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">Média desta semana</span>
+<span class="num" style="font-size: 28px; line-height: 1.05; font-weight: 750; letter-spacing: -0.03em">{{ mediaText }} <span style="font-size: 14px; font-weight: 650; color: #5E5870">mm</span></span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+<span class="num" style="height: 26px; padding: 0 10px; border-radius: 13px; display: flex; align-items: center; font-size: 12px; font-weight: 700; background: {{ dobraBg }}; color: {{ dobraFg }}">{{ dobraDelta }}</span>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">limite +1,0 mm/semana</span>
+</div>
+</div>
+</section>
+
+<div style="display: flex; align-items: baseline; justify-content: space-between; margin: 10px 4px 0">
+<h2 style="margin: 0; font-size: 15px; font-weight: 750; letter-spacing: -0.01em">Fita métrica</h2>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">em centímetros</span>
+</div>
+<section class="rise" style="animation-delay: 60ms; background: #FFFFFF; border-radius: 24px; padding: 4px 16px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(40,24,90,0.04), 0 12px 32px rgba(60,36,130,0.06)">
+<sc-for list="{{ rows }}" as="m" hint-placeholder-count="7">
+<div class="mrow" style="display: flex; align-items: center; gap: 12px; padding: 12px 0">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="{{ m.id }}" style="font-size: 16px; font-weight: 700">{{ m.name }}</label>
+<span style="font-size: 12px; line-height: 1.35; font-weight: 550; color: #5E5870">{{ m.hint }}</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none">
+<div class="field" style="display: flex; align-items: center; gap: 4px; width: 116px; height: 46px; padding: 0 12px; border-radius: 14px; background: {{ m.boxBg }}; border: 1.5px {{ m.boxStyle }} {{ m.boxLine }}">
+<input id="{{ m.id }}" class="num" type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="–" value="{{ m.val }}" onChange="{{ m.onChange }}" onFocus="{{ m.selectAll }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; font-size: 18px; font-weight: 750; color: #17141F; text-align: right">
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">cm</span>
+</div>
+<span class="num" style="font-size: 12px; font-weight: 650; color: {{ m.deltaFg }}">{{ m.deltaText }}</span>
+</div>
+</div>
+</sc-for>
+</section>
+
+<a href="Semana.dc.html" class="press" style="margin-top: 12px; height: 56px; border-radius: 28px; background: #17141F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; font-weight: 700">Salvar check-in</a>
+<p style="margin: 0; text-align: center; font-size: 13px; font-weight: 550; color: #5E5870">Pode salvar parcial e completar ao longo do dia.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      r: ['15,0', '14,5', '15,0'],
+      v: { braco: '36,2', ombros: '117,4', peitoral: '', abdomen: '', coxa: '', gluteos: '', panturrilha: '' }
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const num = (t) => { const n = parseFloat(String(t).replace(',', '.')); return isNaN(n) ? null : n; };
+    const fmt1 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const signed = (n) => (n > 0.04 ? '+' : n < -0.04 ? '−' : '±') + fmt1(Math.abs(n));
+    const clean = (t) => String(t).replace(/[^0-9,.]/g, '').slice(0, 5);
+    const sel = (e) => {
+      const t = e.target;
+      setTimeout(() => { try { t.setSelectionRange(0, String(t.value).length); } catch (err) {} }, 0);
+    };
+    const box = (filled) => filled
+      ? { boxBg: '#F6F4FA', boxStyle: 'solid', boxLine: '#F6F4FA' }
+      : { boxBg: '#FFFFFF', boxStyle: 'dashed', boxLine: '#C9C2D6' };
+
+    const defs = [
+      ['braco', 'Braço', 'Contraído, no ponto mais grosso', 36.1],
+      ['ombros', 'Ombros', 'Maior circunferência, braços relaxados', 117.2],
+      ['peitoral', 'Peitoral', 'Linha dos mamilos, depois de expirar', 99.2],
+      ['abdomen', 'Abdômen', 'Altura do umbigo, relaxado', 81.2],
+      ['coxa', 'Coxa', 'Meio da coxa, perna relaxada', 56.8],
+      ['gluteos', 'Glúteos', 'Ponto de maior volume, pés juntos', 97.8],
+      ['panturrilha', 'Panturrilha', 'Parte mais grossa, em pé', 37.3]
+    ];
+    const rows = defs.map(([key, name, hint, last]) => {
+      const n = num(s.v[key]);
+      const filled = n !== null;
+      return Object.assign({
+        id: 'm-' + key,
+        selectAll: sel,
+        name,
+        hint,
+        val: s.v[key],
+        onChange: (e) => this.setState({ v: Object.assign({}, this.state.v, { [key]: clean(e.target.value) }) }),
+        deltaText: filled ? signed(n - last) + ' vs sem. 6' : 'sem. 6: ' + fmt1(last),
+        deltaFg: filled ? '#5B34C7' : '#5E5870'
+      }, box(filled));
+    });
+
+    const leituras = s.r.map((val, i) => Object.assign({
+      id: 'dobra-' + i,
+      selectAll: sel,
+      label: (i + 1) + 'ª leitura',
+      val,
+      onChange: (e) => {
+        const r = this.state.r.slice();
+        r[i] = clean(e.target.value);
+        this.setState({ r });
+      }
+    }, box(num(val) !== null)));
+
+    const ok = s.r.map(num).filter((x) => x !== null);
+    const media = ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : null;
+    const dobraDone = ok.length === 3;
+    const done = (dobraDone ? 1 : 0) + rows.filter((r) => num(r.val) !== null).length;
+    const d = media === null ? null : media - 14.9;
+    let dobra = { t: 'sem. 6: 14,9 mm', bg: '#F1EEF6', fg: '#4A3F66' };
+    if (d !== null) dobra = d > 1
+      ? { t: signed(d) + ' mm · acima do limite', bg: '#FFF1DC', fg: '#8A4B00' }
+      : { t: signed(d) + ' mm vs sem. 6', bg: '#E2F4E9', fg: '#17673D' };
+
+    const segs = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({ bg: i < done ? '#7C4DEB' : '#E1DBEC' }));
+
+    return {
+      rows,
+      leituras,
+      segs,
+      done,
+      doneText: done + ' de 8 medidas',
+      mediaText: media === null ? '–' : fmt1(media),
+      dobraDelta: dobra.t,
+      dobraBg: dobra.bg,
+      dobraFg: dobra.fg
+    };
+  }
+}
+</script>
+</body>
+</html>

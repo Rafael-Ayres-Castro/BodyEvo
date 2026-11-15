@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Refeição — Almoço</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E5F2}
+.app,.app *{box-sizing:border-box}
+.app{font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;color:#17141F;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.app a,.app button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font:inherit}
+.app input{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.app input:focus-visible{outline:none}
+.app button:focus-visible,.app a:focus-visible{outline:2px solid #7C4DEB;outline-offset:2px}
+.field{transition:box-shadow 160ms ease,background-color 160ms ease}
+.field:focus-within{box-shadow:0 0 0 2px #7C4DEB;background:#FFFFFF !important}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform 140ms cubic-bezier(0.23,1,0.32,1)}
+.press:active{transform:scale(0.97)}
+.seg{transition:width 260ms cubic-bezier(0.23,1,0.32,1)}
+.frow+.frow{border-top:1px solid #F0EDF5}
+.rise{animation:rise 460ms cubic-bezier(0.23,1,0.32,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rise{animation-name:fade}.seg{transition:none}.press:active{transform:none}}
+/* Polimento: tokens de movimento e toque */
+.app{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--ease-drawer:cubic-bezier(0.32,0.72,0,1);font-optical-sizing:auto}
+.app p{text-wrap:pretty}
+.app h1,.app h2{text-wrap:balance}
+.app [style*="font-size: 11px"],.app [style*="font-size: 12px"]{letter-spacing:0.01em}
+.press{transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,opacity 200ms ease}
+.hit{position:relative}
+.hit::after{content:"";position:absolute;inset:-8px -4px}
+/* Os totais acompanham a digitação: sem animação a cada tecla */
+.rise{animation:none}
+.seg{transition:none}
+</style>
+</helmet>
+<div class="app" style="width: 390px; height: 880px; position: relative; overflow: hidden; background: #F4F2F9">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 300px; background: radial-gradient(120% 85% at 25% 0%, #D9C8FB 0%, rgba(217,200,251,0.45) 45%, rgba(244,242,249,0) 100%)"></div>
+
+<main style="position: relative; padding: 58px 20px 40px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<a href="Main.dc.html" class="press" aria-label="Voltar para Hoje" style="width: 44px; height: 44px; border-radius: 22px; background: rgba(255,255,255,0.7); color: #17141F; display: flex; align-items: center; justify-content: center; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg></a>
+<button type="button" class="press" aria-label="Mais opções da refeição" style="width: 44px; height: 44px; border: 0; border-radius: 22px; background: rgba(255,255,255,0.7); color: #17141F; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="18.5" cy="12" r="1.8"></circle></svg></button>
+</div>
+
+<header style="display: flex; flex-direction: column; gap: 4px; padding: 4px 4px 0">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #5E5870">Quarta, 9 dez · 12:30</p>
+<h1 style="margin: 0; font-size: 28px; line-height: 1.1; font-weight: 750; letter-spacing: -0.028em">Almoço</h1>
+</header>
+
+<section class="rise" aria-label="Total da refeição" style="background: #FFFFFF; border-radius: 28px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(40,24,90,0.04), 0 12px 32px rgba(60,36,130,0.07)">
+<div aria-live="polite" style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<p class="num" style="margin: 0; display: flex; align-items: baseline; gap: 5px"><span style="font-size: 40px; line-height: 1; font-weight: 750; letter-spacing: -0.035em">{{ kcal }}</span><span style="font-size: 16px; font-weight: 650; color: #5E5870">kcal</span></p>
+<span class="num" style="font-size: 13px; font-weight: 650; color: #5E5870; padding-bottom: 4px">{{ share }}</span>
+</div>
+<div role="img" aria-label="{{ splitLabel }}" style="display: flex; gap: 3px; height: 12px">
+<span class="seg" style="border-radius: 6px 2px 2px 6px; background: #7C4DEB; width: {{ pw }}"></span>
+<span class="seg" style="border-radius: 2px; background: #3D8BEB; width: {{ cw }}"></span>
+<span class="seg" style="border-radius: 2px 6px 6px 2px; background: #E2A331; width: {{ gw }}"></span>
+</div>
+<div class="num" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 1px"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: #5E5870"><span style="width: 8px; height: 8px; border-radius: 4px; background: #7C4DEB"></span>Proteína</span><span style="font-size: 17px; font-weight: 750">{{ p }} g</span></div>
+<div style="display: flex; flex-direction: column; gap: 1px"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: #5E5870"><span style="width: 8px; height: 8px; border-radius: 4px; background: #3D8BEB"></span>Carboidrato</span><span style="font-size: 17px; font-weight: 750">{{ c }} g</span></div>
+<div style="display: flex; flex-direction: column; gap: 1px"><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: #5E5870"><span style="width: 8px; height: 8px; border-radius: 4px; background: #E2A331"></span>Gordura</span><span style="font-size: 17px; font-weight: 750">{{ g }} g</span></div>
+</div>
+</section>
+
+<div style="display: flex; align-items: baseline; justify-content: space-between; margin: 8px 4px 0">
+<h2 style="margin: 0; font-size: 15px; font-weight: 750">{{ countText }}</h2>
+<span style="font-size: 12px; font-weight: 600; color: #5E5870">toque no peso para corrigir</span>
+</div>
+<section class="rise" style="animation-delay: 60ms; background: #FFFFFF; border-radius: 24px; padding: 2px 16px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(40,24,90,0.04)">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+<div class="frow" style="display: flex; align-items: center; gap: 10px; padding: 12px 0">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<label for="{{ r.id }}" style="font-size: 15px; font-weight: 700">{{ r.name }}</label>
+<span class="num" style="font-size: 12px; font-weight: 600; color: #5E5870">{{ r.macros }}</span>
+</div>
+<div class="field" style="display: flex; align-items: center; gap: 3px; width: 84px; height: 42px; padding: 0 10px; border-radius: 12px; background: #F6F4FA">
+<input id="{{ r.id }}" class="num" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" value="{{ r.gText }}" onChange="{{ r.onChange }}" onFocus="{{ r.selectAll }}" style="flex: 1; min-width: 0; width: 100%; border: 0; background: transparent; padding: 0; text-align: right; font-size: 17px; font-weight: 750; color: #17141F">
+<span style="font-size: 12px; font-weight: 650; color: #5E5870">g</span>
+</div>
+<span class="num" style="width: 52px; text-align: right; font-size: 15px; font-weight: 750">{{ r.kcal }}</span>
+</div>
+</sc-for>
+</section>
+
+<a href="AddAlimento.dc.html" class="press" style="min-height: 52px; border-radius: 18px; border: 1.5px dashed #C9C2D6; display: flex; align-items: center; justify-content: center; gap: 8px; color: #4A3F66; font-size: 15px; font-weight: 700; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Adicionar alimento ao almoço</a>
+<p style="margin: 0; padding: 0 8px; text-align: center; font-size: 12px; line-height: 1.45; font-weight: 550; color: #5E5870">Cada peso fica salvo e volta como sugestão da próxima vez que você adicionar esse alimento.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":880}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: ['220', '160', '150', '10', '80'] };
+  }
+  renderVals() {
+    const items = [
+      ['Arroz branco cozido', 128, 2.5, 28.1, 0.2],
+      ['Feijão carioca cozido', 76, 4.8, 13.6, 0.5],
+      ['Peito de frango grelhado', 159, 32.0, 0, 2.5],
+      ['Azeite de oliva', 884, 0, 0, 100],
+      ['Brócolis cozido', 25, 2.1, 4.4, 0.5]
+    ];
+    const f1 = (n) => n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+    const kc = (n) => Math.round(n).toLocaleString('pt-BR');
+    const t = [0, 0, 0, 0];
+    const rows = items.map((d, i) => {
+      const grams = Math.max(0, parseFloat(String(this.state.g[i]).replace(',', '.')) || 0);
+      const r = grams / 100;
+      const v = [d[1] * r, d[2] * r, d[3] * r, d[4] * r];
+      v.forEach((x, j) => { t[j] += x; });
+      return {
+        id: 'item-' + i,
+        selectAll: (e) => {
+          const el = e.target;
+          setTimeout(() => { try { el.setSelectionRange(0, String(el.value).length); } catch (err) {} }, 0);
+        },
+        name: d[0],
+        macros: 'P ' + f1(v[1]) + ' · C ' + f1(v[2]) + ' · G ' + f1(v[3]),
+        gText: this.state.g[i],
+        kcal: kc(v[0]),
+        onChange: (e) => {
+          const g = this.state.g.slice();
+          g[i] = String(e.target.value).replace(/[^0-9,.]/g, '').slice(0, 5);
+          this.setState({ g });
+        }
+      };
+    });
+    const pk = t[1] * 4, ck = t[2] * 4, gk = t[3] * 9, sum = (pk + ck + gk) || 1;
+    const pct = (x) => (x / sum * 100).toFixed(1) + '%';
+    return {
+      rows,
+      kcal: kc(t[0]),
+      share: Math.round(t[0] / 3075 * 100) + '% da meta do dia',
+      p: f1(t[1]),
+      c: f1(t[2]),
+      g: f1(t[3]),
+      pw: pct(pk),
+      cw: pct(ck),
+      gw: pct(gk),
+      splitLabel: 'Calorias da refeição: ' + Math.round(pk / sum * 100) + '% proteína, ' + Math.round(ck / sum * 100) + '% carboidrato, ' + Math.round(gk / sum * 100) + '% gordura',
+      countText: items.length + ' alimentos'
+    };
+  }
+}
+</script>
+</body>
+</html>
